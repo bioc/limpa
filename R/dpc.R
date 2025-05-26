@@ -1,10 +1,10 @@
-dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
+dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 2)
 # Estimate detection probability curve (DPC) assuming ON model.
 # Mengbo Li and Gordon Smyth
 # Created 16 May 2022 as part of proDP package.
 # Migrated to limpa package 10 Sept 2024. Last modified 31 Dec 2024.
 {
-  
+
   y <- as.matrix(y)
   narrays <- ncol(y)
   n.detected <- rowSums(!is.na(y))
@@ -18,7 +18,7 @@ dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
 
   dp <- n.detected / narrays
   wt <- rep_len(narrays, nrow(y))
-  
+
   # Get hyperparamters
   hp <- .dpcHyperparam(y)
   mu_obs <- hp$mu_obs.post
@@ -33,7 +33,7 @@ dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
 
   # Get an initial logit-linear fit under zero-truncated binomial
   fit0 <- .logitZTBinom(
-    dp = dp, 
+    dp = dp,
     X = matrix(mu_obs, ncol = 1),
     wt = wt,
     beta0 = betaStart,
@@ -72,11 +72,11 @@ dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
   colnames(info) <- c("beta0", "beta1", "neg.ZBLL")
   rownames(info) <- paste0("i=", 0:(nrow(info)-1))
 
-  list(dpc = betas, 
+  list(dpc = betas,
        history = info,
        dpc.start = betaStart,
        n.detected = n.detected,
-       nsamples = narrays, 
+       nsamples = narrays,
        mu.prior = hp$mu0,
        n.prior = hp$n0,
        df.prior = hp$df.prior,
@@ -90,8 +90,8 @@ dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
 
 
 .dpcHyperparam <- function(y)
-# Obtain hyperparameters and empirical Bayes moderated mu_obs and s2_obs values for fitting the DPC. 
-# Migrated from the protDP package on 10 Sept 2024. Last modified 31 Dec 2024. 
+# Obtain hyperparameters and empirical Bayes moderated mu_obs and s2_obs values for fitting the DPC.
+# Migrated from the protDP package on 10 Sept 2024. Last modified 31 Dec 2024.
 {
   # Observed sample means and variances
   nmis <- rowSums(is.na(y))
@@ -145,11 +145,11 @@ dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
                                n,
                                maxit = 20L,
                                eps = 1e-5,
-                               trace = FALSE) 
+                               trace = FALSE)
 # Moment estimation of the effective sample size hyperparameter n0.
 # tstat is assumed to be sqrt((n+n0)/n0) * T where T is t-distributed on df degrees of freedom.
 # Created 4 Aug 2022 as part of protDP package.
-# Migrated to limpa 10 Sept 2024. Last modified 31 Dec 2024. 
+# Migrated to limpa 10 Sept 2024. Last modified 31 Dec 2024.
 {
   tstat <- as.numeric(tstat)
   ExpectedLogF <- mean(logmdigamma(df/2) - logmdigamma(1/2))
@@ -219,7 +219,7 @@ dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
 
 .logitZTBinom.negLL <- function(params, dp, wt, X)
 # Negative log-likelihood under zero-truncated binomial distribution to fit an empirical logit spline
-# This is the objective function for logitZTBinom(). 
+# This is the objective function for logitZTBinom().
 {
   df <- length(params) - 1
   if (df > 0) X <- cbind(1, X)
