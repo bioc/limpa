@@ -8,7 +8,7 @@ assuming observed normal intensities.
 }
 
 \usage{
-dpc(y, maxit = 100, eps = 1e-04, b1.upper = 1)
+dpc(y, maxit = 100, eps = 1e-04, b1.upper = 2)
 }
 
 \arguments{
