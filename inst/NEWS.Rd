@@ -3,6 +3,36 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.0.4 (2025-06-19)}{\itemize{
+\item
+dpcQuant() now calls dpcImpute() automatically if all proteins have just one peptide.
+}}
+
+
+\section{Version 1.0.3 (2025-05-26)}{\itemize{
+\item
+Fix simProteinDataSet() processing of prop.missing.
+
+\item
+Set b1.upper=2 in dpc().
+
+\item
+Set row.names in dpcImpute().
+}}
+
+
+\section{Version 1.0.2 (2025-04-30)}{\itemize{
+\item
+Cite Li et al (bioRxiv 2025)
+}}
+
+
+\section{Version 1.0.1 (2025-04-20)}{\itemize{
+\item
+Expand Quantification section in the vignette to give more math details.
+}}
+
+
 \section{Version 1.0.0 (2025-04-16)}{\itemize{
 \item
 dpcQuant() and peptides2Proteins() now return essentially equal values if there are 
