@@ -3,6 +3,27 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.0.5 (2025-06-22)}{\itemize{
+\item
+New function plotPeptides() to plot the peptide-level log-intensities for one protein.
+
+\item
+New argument `logit.p` for dztbinom(), which allows the function to avoid subtractive cancellation for success probabilities close to 1.
+dpc() now uses the new argument when calling dztbinom().
+
+\item
+Set the default value of `b1.upper` back to 1 in dpc().
+
+\item
+Revisions to dpcCN() to improve convergence.
+To improve speed, the function now randomly selects a subset of rows of data to process, with the number of rows given by the new argument `subset`.
+The default number of outer iterations is decreased to 2.
+
+\item
+Add sections on dpcImpute() and imputeByExpTilt() to the package vignette.
+}}
+
+
 \section{Version 1.0.4 (2025-06-19)}{\itemize{
 \item
 dpcQuant() now calls dpcImpute() automatically if all proteins have just one peptide.
@@ -14,7 +35,7 @@ dpcQuant() now calls dpcImpute() automatically if all proteins have just one pep
 Fix simProteinDataSet() processing of prop.missing.
 
 \item
-Set b1.upper=2 in dpc().
+Increase default value of `b1.upper` to 2 in dpc().
 
 \item
 Set row.names in dpcImpute().

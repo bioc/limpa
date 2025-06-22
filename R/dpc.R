@@ -1,4 +1,4 @@
-dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 2)
+dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
 # Estimate detection probability curve (DPC) assuming ON model.
 # Mengbo Li and Gordon Smyth
 # Created 16 May 2022 as part of proDP package.
@@ -220,12 +220,12 @@ dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 2)
 .logitZTBinom.negLL <- function(params, dp, wt, X)
 # Negative log-likelihood under zero-truncated binomial distribution to fit an empirical logit spline
 # This is the objective function for logitZTBinom().
+# Created 11 Sep 2024. Last modified 21 Jun 2025.
 {
   df <- length(params) - 1
   if (df > 0) X <- cbind(1, X)
   eta <- colSums(t(X) * params)
-  p <- plogis(eta)
-  -sum(dztbinom(x = dp*wt, size = wt, prob = p, log = TRUE))
+  -sum(dztbinom(x = dp*wt, size = wt, prob = eta, log = TRUE, logit.p=TRUE))
 }
 
 
@@ -234,10 +234,10 @@ dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 2)
 .dpc.negLL <- function(params, dp, wt, mu_obs, mu_mis)
 # Negative log-likelihood under zero-truncated binomial distribution to fit DPC
 # This is the objective function for dpc().
+# Created 11 Sep 2024. Last modified 21 Jun 2025.
 {
   b0 <- params[1]
   b1 <- params[2]
   eta <- b0 + 0.5*b1*(mu_obs + mu_mis)
-  p <- plogis(eta)
-  -sum(dztbinom(x = dp*wt, size = wt, prob = p, log = TRUE))
+  -sum(dztbinom(x = dp*wt, size = wt, prob = eta, log = TRUE, logit.p=TRUE))
 }
