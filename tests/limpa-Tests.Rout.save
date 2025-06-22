@@ -37,7 +37,7 @@ Loading required package: limma
 1 peptides are completely missing in all samples.
 > dpcfit$dpc
      beta0      beta1 
--4.2061550  0.8003126 
+-4.2061461  0.8003111 
 > 
 > y.protein <- dpcQuant(y.peptide,protein.id="Protein",dpcfit)
 Estimating hyperparameters ...
@@ -64,4 +64,4 @@ Proteins: 25 Peptides: 100
 > 
 > proc.time()
    user  system elapsed 
-   0.23    0.18    0.45 
+   0.34    0.10    0.54 
