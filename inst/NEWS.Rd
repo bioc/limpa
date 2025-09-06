@@ -3,6 +3,23 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.0.6 (2025-09-06)}{\itemize{
+\item
+New function dpcON() to estimate the DPC assuming the oberved-normal model.
+Should give same output as dpc() but is somewhat faster.
+
+\item
+New function pztbinomSameSizeLogitPBothTails() to compute left and right tail p-values for 
+zero-truncated binomial quantiles.
+
+\item
+readDIANN() now allows user-specified input column names.
+
+\item
+Bug fix to readSpectronaut() when there is only one peptide annotation column.
+}}
+
+
 \section{Version 1.0.5 (2025-06-22)}{\itemize{
 \item
 New function plotPeptides() to plot the peptide-level log-intensities for one protein.
