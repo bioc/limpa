@@ -13,6 +13,9 @@ Update default `q.columns` for readDIANN().
 
 \item
 Mention readFragPipe() and readMaxQuant() in vignette.
+
+\item
+Add GitHub URL to DESCRIPTION.
 }}
 
 
