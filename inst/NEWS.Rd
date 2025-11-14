@@ -3,6 +3,19 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.2.1 (2025-11-15)}{\itemize{
+\item
+readDIANN() now detects format automatically from file extension.
+Default file name updated to `"report.parquet"` instead of `"Report.tsv"`.
+
+\item
+Update default `q.columns` for readDIANN().
+
+\item
+Mention readFragPipe() and readMaxQuant() in vignette.
+}}
+
+
 \section{Version 1.2.0 (2025-10-28)}{\itemize{
 \item
 New function readFragPipe() to read FragPipe output.
