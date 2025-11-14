@@ -1,28 +1,46 @@
 readDIANN <- function(
-  file="Report.tsv", path=NULL, 
-  format = "parquet", 
+  file="report.parquet", path=NULL, 
+  format = NULL, 
   sep="\t", log=TRUE, 
   run.column = "Run",
   precursor.column = "Precursor.Id",
   qty.column = "Precursor.Normalised",
-  q.columns = c("Global.Q.Value", "Lib.Q.Value"), q.cutoffs = c(0.01, 0.01), 
+  q.columns = c("Q.Value", "Lib.Q.Value", "Lib.PG.Q.Value"), q.cutoffs = c(0.01, 0.01), 
   extra.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic")
   )
 # Read Report.tsv from DIA-NN output
 # Gordon Smyth and Mengbo Li
-# Created 3 July 2023. Last modified 15 October 2025.
+# Created 3 July 2023. Last modified 6 Nov 2025.
 {
-  # Check arguments
+  # Optionally add path to filename
+  file <- as.character(file)
   if (!is.null(path)) file <- file.path(path, file)
+
+  # Combine column-name vectors
   Select <- c(run.column, precursor.column, qty.column, q.columns, extra.columns)
-  format <- match.arg(format, choices = c("tsv", "parquet"))
+
+  # Detect format
+  if(is.null(format)) {
+    n <- nchar(file)
+    if(n > 3L && substring(file,n-3L,n)==".tsv") {
+      format <- "tsv"
+    } else {
+      if(n > 7L && substring(file,n-7L,n)==".parquet") {
+        format <- "parquet"
+      } else {
+        stop("file doesn't have 'tsv' or 'parquet' extension. Please specify format explicitly.")
+      }
+    }
+  } else {
+    format <- match.arg(format, choices = c("tsv", "parquet"))
+  }
 
   # Read DIA-NN report file
-  if (identical(format, "tsv")) {
+  if (format == "tsv") {
     Report <- suppressWarnings(fread(file, sep = sep, select = Select, 
     data.table = FALSE, showProgress = FALSE))
-  } else if (identical(format, "parquet")) {
-  #	Use arrow package to read Parquet format file
+  } else {
+    # Use arrow package to read Parquet format file
     suppressPackageStartupMessages(OK <- requireNamespace("arrow",quietly = TRUE))
     if(!OK) stop("arrow package required but is not installed (or can't be loaded)")
     Report <- suppressWarnings(arrow::read_parquet(file))

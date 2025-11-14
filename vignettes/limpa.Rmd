@@ -1,7 +1,7 @@
 ---
 title: Analyzing mass spectrometry data with limpa
 author: "Mengbo Li and Gordon K. Smyth"
-date: "First version 30 December 2024, Last revised 22 June 2025"
+date: "First version 30 December 2024, Last revised 6 November 2025"
 abstract: >
   Mass spectrometry is a powerful tool in biomedical research. 
   Advancements in label-free methods and MS instruments have enabled high-throughput proteomics profiling of biological samples with the increasingly deeper coverage of the proteome, but missing values are still ubiquitous in MS-based proteomics data.
@@ -147,31 +147,35 @@ The limpa pipeline starts with a matrix of peptide precursor intensities (rows f
 The input data can be conveniently supplied as a limma EList object, but a plain numeric matrix containing the log-intensities is also acceptable.
 Non-detected peptides should be entered as `NA`. 
 
-limpa includes the functions `readDIANN()` and `readSpectronaut()`, which read peptide or peptide-precursor level data output by the popular software tools DIA-NN or Spectronaut respectively.
+limpa includes the functions `readDIANN()`, `readSpectronaut()`, `readFragPipe()` and `readMaxQuant()`, which read peptide or peptide-precursor level data output by the popular mass spectrometry quantification tools DIA-NN, Spectronaut, FragPipe, and MaxQuant respectively.
+In each case, limpa directly reads files output by those tools without any need for prior processing by the analyst.
+
+The `readDIANN()` function reads the main DIA-NN "Report" file, and it supports either the tab-delimited text format written by DIA-NN version 1 or the Apache Parquet format used by DIA-NN version 2.
 For example,
 ```{r, eval = FALSE}
 y.peptide <- readDIANN("Report.tsv")
 ```
-reads the `Report.tsv` file written by DIA-NN from the current working directory.
-
-We are aware that DIA-NN no longer exports its main report in the `.tsv` format, but in the `.parquet` format from version 2.0. 
-To process DIA-NN data in the `.parquet` format, use
+will read a `Report.tsv` file written by DIA-NN v1 from the current working directory, and
 ```{r, eval = FALSE}
-y.peptide <- readDIANN("Report.parquet", format="parquet")
+y.peptide <- readDIANN("Report.parquet")
 ```
+will read a `Report.parquet` file written by DIA-NN v2.
+The format can be specified explicity but, by default, is detected automatically from the Report file name.
 
-For data searched with match-between-run (MBR), as suggested by Thierry Nordmann (Max Planck Institute of Biochemistry), we recommend to filter the observations by the following
+The `readDIANN()` function also includes the option to filter peptide-precursors based on Q-values.
+While limpa is robust to different filtering choices, we recommend the following settings for data searched with match-between-run (MBR):
 ```{r, eval = FALSE}
-y.peptide <- readDIANN("report.tsv",
+y.peptide <- readDIANN("Report.tsv",
              q.columns = c("Q.Value","Lib.Q.Value","Lib.PG.Q.Value"),
              q.cutoffs = 0.01)
 ```
-If searched without MBR, we recommend
+and the following settings if searched without MBR:
 ```{r, eval = FALSE}
-y.peptide <- readDIANN("report.tsv",
+y.peptide <- readDIANN("Report.tsv",
              q.columns = c("Q.Value","Global.Q.Value","Global.PG.Q.Value"),
              q.cutoffs = 0.01)
 ```
+These settings follow suggestions from Thierry Nordmann (Max Planck Institute of Biochemistry).
 
 After reading in the data, it is common to filter out non-proteotypic peptides by
 ```{r, eval = FALSE}
