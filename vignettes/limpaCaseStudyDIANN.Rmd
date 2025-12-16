@@ -1,0 +1,10 @@
+---
+output:
+  html_document:
+    includes:
+      before_body: html/CaseStudyDIANN.html
+vignette: >
+  %\VignetteIndexEntry{limpa case study with DIA-NN data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
