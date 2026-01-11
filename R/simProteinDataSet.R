@@ -1,6 +1,6 @@
 simProteinDataSet <- function(n.peptides=100, n.groups=2, samples.per.group=5, peptides.per.protein=4, mu.range=c(2,10), sigma=0.4, prop.de=0.2, fc=2, dpc.intercept=NULL, dpc.slope=0.7, prop.missing=0.4)
 # Simulate peptide data with missing values.
-# Created 20 Dec 2024. Last modified 26 May 2025.
+# Created 20 Dec 2024. Last modified 6 Jan 2026.
 {
 # Setup peptide-wise mu and sigma
   mu <- seq(from=mu.range[1], to=mu.range[2], length.out=n.peptides)
@@ -76,5 +76,5 @@ simProteinDataSet <- function(n.peptides=100, n.groups=2, samples.per.group=5, p
   Group <- rep(seq_len(n.groups),each=samples.per.group)
   targets <- data.frame(Group=Group)
   row.names(targets) <- colnames(y)
-  new("EList", list(E=y, genes=Genes, targets=targets, other=list(E.complete=y.complete)))
+  new("EList", list(E=y, genes=Genes, targets=targets, dpc=c(Intercept=dpc.intercept,Slope=dpc.slope), other=list(E.complete=y.complete)))
 }

@@ -10,8 +10,9 @@ Plot the peptide-level log-intensities for a specified protein.
 }
 
 \usage{
-\method{plotPeptides}{default}(y, cex=1.5, lwd=1.5, col="blue", step.down=0.5, ...)
-\method{plotPeptides}{EList}(y, index, cex=1.5, lwd=1.5, col="blue", step.down=0.5, ...)
+\method{plotPeptides}{default}(y, cex = 1.5, lwd = 1.5, col = "blue", las = NULL, step.down = 0.5, ...)
+\method{plotPeptides}{EList}(y, index, cex = 1.5, lwd = 1.5, col = "blue",
+     las = NULL, step.down = 0.5, ...)
 }
 
 \arguments{
@@ -30,6 +31,10 @@ Plot the peptide-level log-intensities for a specified protein.
   }
   \item{col}{
     line color.
+  }
+  \item{las}{
+    orientation of x-axis sample labels. Use \code{0} or \code{1} for horizontal and \code{2} or \code{3} for vertical.
+    Defaults to vertical if more than six samples and horizontal if less.
   }
   \item{step.down}{
     missing values are plotted this amount below the minimum observed value for each peptide.

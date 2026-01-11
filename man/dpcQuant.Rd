@@ -2,6 +2,9 @@
 \alias{dpcQuant}
 \alias{dpcQuant.default}
 \alias{dpcQuant.EList}
+\alias{dpcQuantByRow}
+\alias{dpcQuantByRow.default}
+\alias{dpcQuantByRow.EList}
 \alias{dpcImpute}
 \alias{dpcImpute.default}
 \alias{dpcImpute.EList}
@@ -14,7 +17,7 @@ Use the DPC to quantify protein expression values.
 \usage{
 \method{dpcQuant}{EList}(y, protein.id = "Protein.Group", dpc = NULL, dpc.slope = 0.8,
      verbose = TRUE, chunk = 1000, ...)
-\method{dpcImpute}{EList}(y, dpc = NULL, dpc.slope = 0.8, verbose = TRUE, chunk = 1000, ...)
+\method{dpcQuantByRow}{EList}(y, dpc = NULL, dpc.slope = 0.8, verbose = TRUE, chunk = 1000, ...)
 }
 
 \arguments{
@@ -56,15 +59,19 @@ If the \code{dpc} argument is \code{NULL}, then \code{dpc.slope} will be used as
 
 The output from \code{dpcQuant} can be input to \code{dpcDE}.
 
-\code{dpcImpute} performs imputation without summarization by treating each row as a separate protein.
+\code{dpcQuantByRow} performs imputation without summarization by treating each row as a separate protein.
 }
 
 \value{
 \code{dpcQuant()} produces an \code{EList} object with a row for each protein, with the following extra components:
   \item{other$n.observations}{matrix giving the number of missing non-missing peptide observations supporting each protein expression value.}
   \item{other$standard.error}{matrix giving the standard error of each protein expression value.}
+  \item{dpc}{DPC used for the quantifications.}
+  \item{prior.mean}{prior mean used for the quantification.}
+  \item{prior.sd}{prior between-peptide standard deviation used for the quantifications.}
+  \item{prior.logFC}{prior within-peptide standard deviation used for the quantifications.}
 
-\code{dpcImpute()} produces an \code{EList} object with the same number of rows as \code{y}.
+\code{dpcQuantByRow()} produces an \code{EList} object with the same number of rows as \code{y}.
 }
 
 \note{
