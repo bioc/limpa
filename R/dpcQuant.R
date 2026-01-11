@@ -3,7 +3,7 @@ dpcQuant <- function(y, ...)
 
 dpcQuant.default <- function(y, protein.id, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000L, ...)
 # Use the DPC to quantify protein expression values by maximum posterior.
-# Created 31 Dec 2024. Last modified 23 Mar 2025.
+# Created 31 Dec 2024. Last modified 18 Dec 2025.
 {
 # Check y
   y <- as.matrix(y)
@@ -19,7 +19,7 @@ dpcQuant.default <- function(y, protein.id, dpc=NULL, dpc.slope=0.8, verbose=TRU
 
 dpcQuant.EList <- function(y, protein.id="Protein.Group", dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000L, ...)
 # Use the DPC to quantify protein expression values by maximum posterior.
-# Created 27 Dec 2024. Last modified 19 Jun 2025.
+# Created 27 Dec 2024. Last modified 29 Dec 2025.
 {
 # Check dpc
   if(is.list(dpc)) dpc <- dpc$dpc
@@ -36,6 +36,7 @@ dpcQuant.EList <- function(y, protein.id="Protein.Group", dpc=NULL, dpc.slope=0.
     ColName <- protein.id
     protein.id <- y$genes[[ColName]]
     if(is.null(protein.id)) stop("Column \"",ColName,"\" not found in y$genes")
+    y$genes[[ColName]] <- NULL
   } else {
     if(!identical(nrow(y),length(protein.id))) stop("length(protein.id) must match nrows(y)")
   }
@@ -55,6 +56,10 @@ dpcQuant.EList <- function(y, protein.id="Protein.Group", dpc=NULL, dpc.slope=0.
 # Estimate Bayes hyperparameters
   if(verbose) message("Estimating hyperparameters ...")
   h <- dpcQuantHyperparam(y, protein.id=protein.id, dpc.slope=dpc[2], ...)
+
+# Prevent very small prior sd
+  h$prior.sd <- max(h$prior.sd, 1)
+  h$prior.logFC <- max(h$prior.logFC, 1)
 
 # Summarize peptides to proteins by maximum posterior estimation
   if(verbose) message("Quantifying proteins ...")
@@ -87,5 +92,8 @@ dpcQuant.EList <- function(y, protein.id="Protein.Group", dpc=NULL, dpc.slope=0.
   }
   y.protein$targets <- y$targets
   y.protein$dpc <- dpc
+  y.protein$prior.mean <- h$prior.mean
+  y.protein$prior.sd <- h$prior.sd
+  y.protein$prior.logFC <- h$prior.logFC
   y.protein
 }

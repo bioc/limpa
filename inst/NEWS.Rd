@@ -3,6 +3,32 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.3.3 (2025-12-30)}{\itemize{
+\item
+dpcImpute() renamed to dpcQuantByRow() (although old function name will continue to work for backward compatibility).
+
+\item
+New case study section in vignette linking out to several external vignettes and to a FAQ.
+The DIA-NN case study is also now external, on the limpa GitHub website.
+
+\item
+When operating on an EList, dpcQuant() now removes the protein ID
+annotation column from the output object so that the 
+IDs appear only as row.names.
+dpcQuant() also stores the DPC and the hyperparameters in the output EList object.
+
+\item
+plotPeptides() now plots sample names, same as plotProtein().
+
+\item
+The y-axis from plotPeptides() is now labelled "Log-intensities"
+instead of "Log-expression".
+
+\item
+New argument `las` for plotProtein() and plotPeptides() to allow vertical orientation of sample names on x-axis.
+}}
+
+
 \section{Version 1.2.1 (2025-11-15)}{\itemize{
 \item
 readDIANN() now detects format automatically from file extension.

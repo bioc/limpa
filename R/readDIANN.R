@@ -10,7 +10,7 @@ readDIANN <- function(
   )
 # Read Report.tsv from DIA-NN output
 # Gordon Smyth and Mengbo Li
-# Created 3 July 2023. Last modified 6 Nov 2025.
+# Created 3 July 2023. Last modified 31 Dec 2025.
 {
   # Optionally add path to filename
   file <- as.character(file)
@@ -63,7 +63,7 @@ readDIANN <- function(
   if (length(q.columns) > 0L) {
     if (!identical(length(q.cutoffs), length(q.columns))) {
       q.cutoffs <- rep_len(q.cutoffs[1], length(q.columns))
-      message("Length of q-value columns does not match with length of q-value cutoffs. Use q.cutoffs[1] for all columns.")
+      message("Length of q-value columns does not match with length of q-value cutoffs. Using q.cutoffs[1] for all columns.")
     }
     kp <- rep_len(TRUE, nrow(Report))
     for (qcol in seq_along(q.columns)) {
