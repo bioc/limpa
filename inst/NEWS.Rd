@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 
 
-\section{Version 1.3.3 (2025-12-30)}{\itemize{
+\section{Version 1.2.3 (2025-12-30)}{\itemize{
 \item
 dpcImpute() renamed to dpcQuantByRow() (although old function name will continue to work for backward compatibility).
 

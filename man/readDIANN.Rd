@@ -1,8 +1,8 @@
 \name{readDIANN}
 \alias{readDIANN}
-\title{Read Peptide-Precursor Intensities From DIA-NN Output}
+\title{Read Precursor Ion Intensities From DIA-NN Output}
 \description{
-Read DIA-NN Reports.tsv file into EList object.
+Read the DIA-NN report file (report.tsv or report.parquet) into an EList object.
 }
 
 \usage{
@@ -24,13 +24,13 @@ readDIANN(file = "report.parquet", path = NULL, format = NULL, sep = "\t", log =
   \item{run.column}{character string giving the name of the column containing run names.}
   \item{precursor.column}{character string giving the name of the column containing precursor IDs.}
   \item{qty.column}{character string giving the name of the column containing precursor intensities.}
-  \item{q.columns}{character vector of column names containing Q-values for peptide identification.}
-  \item{q.cutoffs}{numeric vector of same length as \code{q.columns} giving cutoffs to apply to the Q-values. Only peptides with values below the cutoffs will be retained.}
+  \item{q.columns}{character vector of column names containing Q-values for precursor identification.}
+  \item{q.cutoffs}{numeric vector of same length as \code{q.columns} giving cutoffs to apply to the Q-values. Only precursors with values below the cutoffs will be retained.}
   \item{extra.columns}{other columns to be read and included in the annotation data.frame.}
 }
 
 \details{
-DIA-NN (Demichev et al 2020) writes a main report file in long (data.frame) format, typically called \code{Report.tsv} or \code{Report.parquet}, containing normalized intensities for peptide precursors.
+DIA-NN (Demichev et al 2020) writes a main report file in long (data.frame) format, typically called \code{Report.tsv} or \code{Report.parquet}, containing normalized intensities for precursors ions.
 \code{readDIANN} reads this file and produces an EList or EListRaw object.
 
 Version 1 of DIA-NN wrote the report file in tab-delimited format.
@@ -39,10 +39,10 @@ In any case, \code{readDIANN} can read the report file directly or, alternativel
 }
 
 \value{
-If \code{log=FALSE}, an EListRaw object containing precursor-level unlogged intensities with zeros and protein annotation.
-If \code{log=TRUE}, an EList object containing precursor-level log2 intensities with NAs and protein annotation.
-Rows are peptide-precursors and columns are samples.
-Peptide precursor and protein annotation is stored in the \code{genes} output component.
+If \code{log=FALSE}, an EListRaw object containing precursor unlogged intensities with zeros and protein annotation.
+If \code{log=TRUE}, an EList object containing precursor log2 intensities with NAs and protein annotation.
+Rows are precursors and columns are samples.
+Precursor and protein annotation is stored in the \code{genes} output component.
 }
 
 \references{
@@ -54,10 +54,8 @@ DIA-NN: neural networks and interference correction enable deep proteome coverag
 \examples{
 \dontrun{
 ypep <- readDIAN()
-ypep <- filterCompoundProteins(ypep)
-ypep <- filterNonProteotypicPeptides(ypep)
-dpcfit <- dpc(ypep)
-yprot <- dpcQuant(ypep, dpc=dpcfit)
+dpcest <- dpc(ypep)
+yprot <- dpcQuant(ypep, dpc=dpcest)
 }
 }
 
