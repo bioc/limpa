@@ -12,7 +12,7 @@ Recent advancements in label-free methods and MS instruments have enabled the qu
 However, missing values are still ubiquitous in MS-based proteomics data. 
 We observe from a wide range of real datasets that missingness in label-free data is intensity-dependent, so that the missing values are missing not at random or, in other words, are non-ignorable. 
 
-This package implements statistical and computational methods for analysing MS-based label-free proteomics data with non-ignorable missing values. 
+This package implements statistical and computational methods for analysing MS-based label-free proteomics data with probabilistic recovery of information from missing values. 
 The package use the observed proteomics data to estimate the detection probability curve (DPC), which provides a formal probabilistic model for the intensity-dependent missingness.
 Based on exponential tilting, the DPC estimates the detection probabilities given the underlying intensity of each observation, observed or unobserved. 
 Importantly, the DPC evaluates how much statistical information can or cannot be recovered from the missing value pattern, and can be used to inform downstream analyses such as differential expression (DE) analysis. 
@@ -20,6 +20,7 @@ Importantly, the DPC evaluates how much statistical information can or cannot be
 Next, the package implements a novel protein quantification method, called DPC-quant, where missing values are represented by the DPC. 
 An empirical Bayes scheme is employed to borrow information across the tens of thousands of peptides measured in a typical experiment. 
 A multivariate normal prior is estimated empirically from data to describe the variability in log-intensities across the samples and across the peptides.
+The package accepts precursor (or peptide) intensities including missing values and produces complete protein quantifications without the need for imputation. 
 
 Finally, quantification uncertainty is incorporated into the differential expression analysis using precision weights.
 Leveraging the limma package, a new variance modelling approach with multiple predictors is used, which allows the DPC-quant precisions to be propagated to the differential expression analysis while simultaneously assuming a mean-variance relationship.

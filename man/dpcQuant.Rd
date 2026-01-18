@@ -11,7 +11,7 @@
 \title{Quantify Proteins Using the DPC}
 
 \description{
-Use the DPC to quantify protein expression values.
+Use the DPC to quantify protein expression values for a series of samples from precursor ion intensities.
 }
 
 \usage{
@@ -22,8 +22,8 @@ Use the DPC to quantify protein expression values.
 
 \arguments{
   \item{y}{
-    a numeric matrix or EList of peptide-level log2-expression values.
-    Columns are samples and rows are peptides or precursors.
+    a numeric matrix or EList of precursor log2-intensities values.
+    Columns are samples and rows are precursors.
   }
   \item{protein.id}{
     protein IDs.
@@ -51,7 +51,7 @@ Use the DPC to quantify protein expression values.
 }
 
 \details{
-Implements the DPC-Quant method, which quantifies protein log2-expression values from peptide data.
+Implements the DPC-Quant method, which quantifies protein log2-expression values from precursor data.
 The method represents missing values probabilistically using the PDC and returns maximum posterior estimates for all the protein log2-expression values, so that there are no missing values in the final summary.
 
 The \code{dpc} function is usually used to estimate the detection probability curve (DPC) before running \code{dpcQuant}, however a preset DPC slope can also be used.
@@ -64,12 +64,12 @@ The output from \code{dpcQuant} can be input to \code{dpcDE}.
 
 \value{
 \code{dpcQuant()} produces an \code{EList} object with a row for each protein, with the following extra components:
-  \item{other$n.observations}{matrix giving the number of missing non-missing peptide observations supporting each protein expression value.}
+  \item{other$n.observations}{matrix giving the number of missing non-missing precursor observations supporting each protein expression value.}
   \item{other$standard.error}{matrix giving the standard error of each protein expression value.}
   \item{dpc}{DPC used for the quantifications.}
   \item{prior.mean}{prior mean used for the quantification.}
-  \item{prior.sd}{prior between-peptide standard deviation used for the quantifications.}
-  \item{prior.logFC}{prior within-peptide standard deviation used for the quantifications.}
+  \item{prior.sd}{prior between-precursor standard deviation used for the quantifications.}
+  \item{prior.logFC}{prior within-precursor standard deviation used for the quantifications.}
 
 \code{dpcQuantByRow()} produces an \code{EList} object with the same number of rows as \code{y}.
 }

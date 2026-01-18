@@ -42,7 +42,7 @@ Peptide precursor and protein annotation is stored in the \code{genes} output co
 }
 
 \seealso{
-\code{\link{EList-class}}.
+\code{\link[limma]{EList-class}}.
 }
 
 \examples{
