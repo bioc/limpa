@@ -54,12 +54,12 @@ Use the DPC to quantify protein expression values for a series of samples from p
 Implements the DPC-Quant method, which quantifies protein log2-expression values from precursor data.
 The method represents missing values probabilistically using the PDC and returns maximum posterior estimates for all the protein log2-expression values, so that there are no missing values in the final summary.
 
-The \code{dpc} function is usually used to estimate the detection probability curve (DPC) before running \code{dpcQuant}, however a preset DPC slope can also be used.
+The \code{dpc} function (or \code{dpcON} or \code{dpcCN}) is usually used to estimate the detection probability curve (DPC) before running \code{dpcQuant}, however a preset DPC slope can also be used.
 If the \code{dpc} argument is \code{NULL}, then \code{dpc.slope} will be used as the DPC together with a DPC intercept estimated by \code{estimateDPCIntercept}.
 
 The output from \code{dpcQuant} can be input to \code{dpcDE}.
 
-\code{dpcQuantByRow} performs imputation without summarization by treating each row as a separate protein.
+\code{dpcQuantByRow} estimates log2-intensities row-wise without summarization by treating each row as a separate protein.
 }
 
 \value{
@@ -70,6 +70,10 @@ The output from \code{dpcQuant} can be input to \code{dpcDE}.
   \item{prior.mean}{prior mean used for the quantification.}
   \item{prior.sd}{prior between-precursor standard deviation used for the quantifications.}
   \item{prior.logFC}{prior within-precursor standard deviation used for the quantifications.}
+
+\code{dpcQuant()} also adds the following two columns to the \code{genes} data.frame:
+  \item{NPeptides}{number of precursors (or features) for each protein.}
+  \item{PropObs}{proportion of intensities that are observed (not missing). Averaged over all precursors and samples for each protein.}
 
 \code{dpcQuantByRow()} produces an \code{EList} object with the same number of rows as \code{y}.
 }

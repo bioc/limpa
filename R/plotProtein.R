@@ -1,4 +1,5 @@
-plotProtein <- function(y, protein, col = "black", cex = 2, lwd = 2, las = NULL, ...)
+plotProtein <- function(y, protein, col="black", cex=2, lwd=2, las=NULL,
+               xlab="", ylab="Estimated log-intensity", ...)
 # Plot the sample-wise protein summary with error bars by dpcQuant.
 # Created 15 Jan 2025. Last modified 29 Dec 2025.
 {
@@ -19,17 +20,17 @@ plotProtein <- function(y, protein, col = "black", cex = 2, lwd = 2, las = NULL,
   y0 <- y_protein - se_protein
   y1 <- y_protein + se_protein
   ylim <- c(min(y0, y1), max(y0, y1))
-  plot(y_protein, pch = 16, ylim = ylim, col = col, xaxt = "none", 
-  cex = cex, xlab = "Sample", ylab = "Estimated log-intensity", ...)
+  plot(y_protein, pch=16, ylim=ylim, col=col, xaxt="none", 
+  cex=cex, xlab=xlab, ylab=ylab, ...)
 
   # Add sample labels to x-axis
   cn <- colnames(y)
   if(is.null(cn)) cn <- 1:nsamples
   if(is.null(las)) if(nsamples > 6) las <- 2 else las <- 0
-  axis(1, at = x, labels = cn, las = las)
+  axis(1, at=x, labels=cn, las=las)
 
   # Add standard error bars
-  arrows(x, y0, x, y1, length = 0.1, angle = 90, code = 3, lwd = lwd, col = col)
+  arrows(x, y0, x, y1, length=0.1, angle=90, code=3, lwd=lwd, col=col)
 
   invisible(list(y=y_protein, se=se_protein))
 }

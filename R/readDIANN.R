@@ -5,12 +5,12 @@ readDIANN <- function(
   run.column = "Run",
   precursor.column = "Precursor.Id",
   qty.column = "Precursor.Normalised",
-  q.columns = c("Q.Value", "Lib.Q.Value", "Lib.PG.Q.Value"), q.cutoffs = c(0.01, 0.01), 
+  q.columns = c("Q.Value", "Lib.Q.Value", "Lib.PG.Q.Value"), q.cutoffs = 0.01, 
   extra.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic")
   )
 # Read Report.tsv from DIA-NN output
 # Gordon Smyth and Mengbo Li
-# Created 3 July 2023. Last modified 31 Dec 2025.
+# Created 3 July 2023. Last modified 31 Jan 2026.
 {
   # Optionally add path to filename
   file <- as.character(file)
@@ -63,7 +63,7 @@ readDIANN <- function(
   if (length(q.columns) > 0L) {
     if (!identical(length(q.cutoffs), length(q.columns))) {
       q.cutoffs <- rep_len(q.cutoffs[1], length(q.columns))
-      message("Length of q-value columns does not match with length of q-value cutoffs. Using q.cutoffs[1] for all columns.")
+      if(length(q.cutoffs) > 0L) message("Length of q.cutoffs doesn't that of q.columns. Using q.cutoffs[1] for all columns.")
     }
     kp <- rep_len(TRUE, nrow(Report))
     for (qcol in seq_along(q.columns)) {

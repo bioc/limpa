@@ -3,6 +3,29 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.3.5 (2026-01-31)}{\itemize{
+\item
+The upper limit of the y-axis in the plot from plotDPC() is now extended slightly to allow for jittering of the detection proportions. Previously some of the jittered proportions above 1 where not shown on the plot.
+
+\item
+New argument `show.start` for plotDPC() to control whether the starting curve from dpc() is shown on the plot as well as the final plot.
+Default is now `FALSE`, whereas previously the starting curve was always shown.
+
+\item
+In dpcCN(), default value for `subset` increased to 2000 and default value for `verbose` reset to `FALSE`.
+
+\item
+Axis labels produced by plotProtein() are now user-settable.
+
+\item
+Vignette now cites Corso et al (2026) as IP-MS example.
+
+\item
+Vignette now has a "Further documentation" section that links out to case studies, FAQ and reference manual.
+The case studies are given as one link instead of listing them individually.
+}}
+
+
 \section{Version 1.3.3 (2025-12-30)}{\itemize{
 \item
 dpcImpute() renamed to dpcQuantByRow() (although old function name will continue to work for backward compatibility).

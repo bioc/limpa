@@ -10,7 +10,7 @@ assuming a complete normal model for the peptide intensities.
 \usage{
 dpcCN(
   y, dpc.slope.start = 0.7, dpc.start = NULL, 
-  iterations = 2, subset = 1000, verbose = TRUE
+  iterations = 2, subset = 2000, verbose = FALSE
 )
 }
 
@@ -38,9 +38,6 @@ Three outer iterations are usually sufficient.
 
 \note{
 This function may underestimate the DPC slope if entirely missing peptides are omitted and the proportion of peptides that are entirely missing by chance is not small.
-
-\code{dpcCN} can take several minutes on large datasets so, by default, progress information is turned on with \code{verbose=TRUE}.
-The function will run quietly if \code{verbose=FALSE} is set.
 }
 
 \value{
@@ -80,8 +77,8 @@ Partitioned algorithms for maximum likelihood and other non-linear estimation.
 
 \examples{
 y <- simProteinDataSet(n.peptides=100, n.groups=1)
-out <- dpcCN(y)
-out$dpc
+dpcest <- dpcCN(y)
+dpcest$dpc
 }
 
 \concept{Detection probability curve}
