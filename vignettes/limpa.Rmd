@@ -1,7 +1,7 @@
 ---
 title: Analyzing mass spectrometry data with limpa
 author: "Mengbo Li and Gordon K. Smyth"
-date: "First version 30 December 2024, Last revised 18 January 2026"
+date: "First version 30 December 2024, Last revised 31 January 2026"
 abstract: >
   Mass spectrometry is a powerful tool in biomedical research.
   Advancements in label-free methods and MS instruments have enabled high-throughput proteomics profiling of biological samples with the increasingly deeper coverage of the proteome, but missing values are still ubiquitous in MS-based proteomics data.
@@ -36,7 +36,7 @@ options(digits=4)
 # Background
 
 limpa assumes that label-free proteomics profiling has been performed on a series of biological samples, and that precursor ion intensities have been obtained for each sample (Luo et al 2023).
-limma reads the precursor intensity data from popular software tools such as DIA-NN (Demichev et al 2020), Spectronaut (https://staging.biognosys.com), FragPipe (Yu et al 2023), or MaxQuant (Tyanova et al 2016).
+limpa reads the precursor intensity data from popular software tools such as DIA-NN (Demichev et al 2020), Spectronaut (https://staging.biognosys.com), FragPipe (Yu et al 2023), or MaxQuant (Tyanova et al 2016).
 In each case, the precursor quantifications are read into a wide-format (precursor by sample) matrix of log-intensities.
 The only other information required to start a limpa analysis is a vector specifying the protein or protein-group membership of each precursor.
 
@@ -74,7 +74,7 @@ topTable(fit)
 
 # Example analysis
 
-Real proteomics datasets are too large to analyze in this vignette, but we can demonstrate a complete reproducible analysis using a small simulated data.
+Real proteomics datasets are too large to analyze in this vignette (see <https://github.com/smythlab/limpa/> for case studies with real data), but we can demonstrate a complete reproducible analysis using a small simulated data.
 First, generate the dataset:
 ```{r sim}
 library(limpa)
@@ -113,18 +113,22 @@ levels(Group.color) <- c("blue","red")
 plotMDSUsingSEs(y.protein, pch=16, col=as.character(Group.color))
 ```
 
-Finally, we conduct a differential expression analysis using the limma package.
+Finally, we conduct a differential expression analysis using `dpcDE()`.
 The `dpcDE` function calls limpa's `voomaLmFitWithImpution` function, which is an extension of limma's `vooma()` approach.
 `voomaLmFitWithImputation` computes precision weights, in an analogous way to `voom` for RNA-seq, but instead of using count sizes to predict the variances it uses the quantification precisions from `dpcQuant`.
 The plot shows how `dpcDE` predicts the protein-wise variances from the quantification uncertainties and from the averge log-intensity levels.
 ```{r dpcDE}
 design <- model.matrix(~Group)
 fit <- dpcDE(y.protein, design, plot=TRUE)
+```
+
+`dpcDE` is analogous to the `lmFit` function in limma, and output from `dpcDE` enters into downstream limma analyses in the same way that output from `lmFit` would.
+To get a table of DE proteins we proceed
+```{r eBayes}
 fit <- eBayes(fit)
 topTable(fit, coef=2)
 ```
-This small dataset has five truly DE proteins.
-Four of the give are top-ranked in the DE results.
+This small simulated dataset has five truly DE proteins, and four of the five are top-ranked in the DE results.
 The other DE protein is ranked 10th in the DE results and does not achieve statistical significant because it had only 17% detected observations and, hence, a high quantification uncertainty.
 
 To view the log-expression values for the top DE protein, together with standard errors:
@@ -238,24 +242,29 @@ This allows the uncertainty associated with missing values imputation to be prop
 `voomaLmFitWithImputation` also gives special consideration to instances where all the expression values for a particular protein are imputed for one or more treatment conditions, ensuring robust differential expression analyses even for proteins with only a small proportion of detected peptides.
 
 limpa's `dpcDE` function is a wrapper function, passing the appropriate standard errors from `dpcQuant` to `voomaLmFitWithImputation`.
-The limpa package is fully compatible with limma analysis pipelines, allowing any complex experimental design and other downstream tasks such as the gene ontology or pathway analysis.
+The limpa package has the full generality of limma analysis pipelines, allowing any complex experimental design and other downstream tasks such as the gene ontology or pathway analysis.
 limpa works with any design matrix, with any combination of explanatory factors and covariates.
 The `dpcDE()` function accepts any argument that `voomaLmFitWithImputation` or `voomaLmFit` do.
 For example, `dpcDE(y.protein, design, sample.weights=TRUE)` can be used to downweight outlier samples.
 Or `dpc(y.protein, design, block=subject)` could be used to model the correlation between repeated observations on the same subject.
+
+Note that limpa differential expression analyses must be done using `dpcDE` rather than using regular limma functions such as `lmFit` or `arrayWeights`.
+Only `dpcDE` is able to make full use of the standard errors and observation counts computed by `dpcQuant()`.
+Once `dpcDE` has been run, however, one returns to standard limma pipelines.
 
 # Working with data already summarized at the protein-level
 
 We recommend inputing precursor-level data to limpa, but limpa can also operate on intensities, such as MaxLFQ, that have already been summarized at the protein level,
 by using `dpcQuantByRow` function instead of `dpcQuant`.
 
-# Post-translational modifications (PTMs)
+# Post-translational modifications (PTMs) or immunoprecipitation mass spectrometry (IP-MS)
 
 To analyse PTMs, one would work with a tool such as Spectronaut to obtain intensities for each distinct modification.
 limpa can accept a matrix of PTM-level intensities, and can undertake differential abundance analyses of the PTMs.
 Again, one would use `dpcQuantByRow` in this case instead of `dpcQuant`.
+The same approach can be used for IP-MS (Corso et al 2026).
 
-# Differential peptide usage
+# Differential precursor or peptide usage
 
 A third application for which `dpcQuantByRow` is used instead of `dpcQuant` is for detecting differential isoform usage.
 To detect differential precursor usage for each protein between experimental conditions, one fits precursor-level linear models using `dpcDE`, then `limma::diffSplice` tests for differential usage.
@@ -265,25 +274,25 @@ The full pipeline is shown in a case study (see link below).
 
 limpa has modest memory requirements and can be run on laptop, even with 100s or 1000s of samples.
 The most time-consuming step is `dpcQuant()`, which is fast for small to moderate datasets, but can be relatively slow, taking several hours, for very large datasets with thousands of samples.
+A dataset with 200 samples takes about 30 minutes to analyze on a MacBook Pro laptop, even if all proteins and precursors are retained in the analysis.
 For very large datasets with 1000s of samples, we suggest an alternative pipeline using `imputeByExpTilt()`.
 
-# Case studies
+# Further documentation
 
-* **[Example analysis with DIA-NN output](https://smythlab.github.io/limpa/HYE100-DIANN.html)**
-* **[Example analysis with Spectronaut output](https://smythlab.github.io/limpa/HYE100-DIANN.html)**
-* **[Why limpa is better than imputation: an example where imputation methods fail completely](https://smythlab.github.io/limpa/HYE100-Unbalanced.html)**
-* **[Detecting differential peptide usage](https://smythlab.github.io/limpa/DiffPeptideUsage.html)**
-
-# Other documentation
-
+* **[Case studies with real data](https://github.com/smythlab/limpa/)**
 * **[Frequently asked questions](https://smythlab.github.io/limpa/FAQ.html)**
-* **[Refence Manual (pdf)](https://bioconductor.org/packages/release/bioc/manuals/limpa/man/limpa.pdf)**
+* **[Reference Manual (pdf)](https://bioconductor.org/packages/release/bioc/manuals/limpa/man/limpa.pdf)**
 
 # Funding
 
 The limpa project was supported by Chan Zuckerberg Initiative EOSS grant 2021-237445, by Melbourne Research and CSL Translational Data Science Scholarships to ML, and by NHMRC Investigator Grant 2025645 to GS.
 
 # Cited references
+
+Corso LD, River ISa, Al Halawani A, Gerak CAN, Gannon D, Ozaydin O, Li M, Thyagarajan K, Niezabitowski L, Chua NK, Tan W, Wudy SI, McLysaght A, Smyth GK, Shakeel S, Feltham R, Vervoort SJ (2026).
+INTS12 bridges Integrator and NELF to prevent the release of non-processive RNA polymerase II complexes.
+*bioRxiv*
+[doi:10.64898/2026.01.16.699819](https://doi.org/10.64898/2026.01.16.699819).
 
 Demichev V, Messner CB, Vernardis SI, Lilley KS, Ralser M (2020).
 DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput.
@@ -303,10 +312,6 @@ Li M (2024).
 *Linear Models and Empirical Bayes Methods for Mass Spectrometry-based Proteomics Data*.
 PhD Thesis, University of Melbourne.
 [http://hdl.handle.net/11343/351600](http://hdl.handle.net/11343/351600)
-
-Lou R, Cao Y, Li S, Lang X, Li Y, Zhang Y, Shui W (2023).
-Benchmarking commonly used software suites and analysis workflows for DIA proteomics and phosphoproteomics.
-*Nature Communications* 14(1), 94.
 
 Ritchie ME, Phipson B, Wu D, Hu Y, Law CW, Shi W, Smyth GK (2015).
 limma powers differential expression analyses for RNA-sequencing and microarray studies.

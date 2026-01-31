@@ -9,7 +9,7 @@ voomaLmFitWithImputation <- function(
 #	Creates an MArrayLM object for entry to eBayes() etc in the limma pipeline.
 #	Corrects for loss of residual df due to entirely imputed values in a group.
 #	Mengbo Li and Gordon Smyth
-#	Created 24 Nov 2023. Last modifed 10 Apr 2025.
+#	Created 24 Nov 2023. Last modifed 20 Jan 2026.
 {
 	Block <- !is.null(block)
 	PriorWeights <- !is.null(prior.weights)
@@ -24,6 +24,10 @@ voomaLmFitWithImputation <- function(
 	ngenes <- nrow(y)
 	if(narrays < 2L) stop("Too few samples")
 	if(ngenes < 2L) stop("Need multiple rows")
+
+#	Average log-expression
+#	Note that when this function is called by limpa::dpcDE(), there will be no NAs in the object.
+#	If NAs are present, then they are assumed to be MAR and `imputed` is assumed to be NULL.
 	A <- rowMeans(y$E,na.rm=TRUE)
 	if(anyNA(A)) stop("y contains entirely NA rows")
 

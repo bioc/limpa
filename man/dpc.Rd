@@ -64,8 +64,8 @@ Neither random nor censored: estimating intensity-dependent probabilities for mi
 
 \examples{
 y <- simProteinDataSet(n.peptides=100, n.groups=1)
-out <- dpc(y)
-out$dpc
+dpcest <- dpcON(y)
+dpcest$dpc
 }
 
 \concept{Detection probability curve}

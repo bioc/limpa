@@ -11,7 +11,7 @@ readDIANN(file = "report.parquet", path = NULL, format = NULL, sep = "\t", log =
   precursor.column = "Precursor.Id",
   qty.column = "Precursor.Normalised",
   q.columns = c("Q.Value", "Lib.Q.Value", "Lib.PG.Q.Value"),
-  q.cutoffs = c(0.01, 0.01), 
+  q.cutoffs = 0.01, 
   extra.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic"))
 }
 
@@ -24,13 +24,13 @@ readDIANN(file = "report.parquet", path = NULL, format = NULL, sep = "\t", log =
   \item{run.column}{character string giving the name of the column containing run names.}
   \item{precursor.column}{character string giving the name of the column containing precursor IDs.}
   \item{qty.column}{character string giving the name of the column containing precursor intensities.}
-  \item{q.columns}{character vector of column names containing Q-values for precursor identification.}
-  \item{q.cutoffs}{numeric vector of same length as \code{q.columns} giving cutoffs to apply to the Q-values. Only precursors with values below the cutoffs will be retained.}
-  \item{extra.columns}{other columns to be read and included in the annotation data.frame.}
+  \item{q.columns}{character vector of column names containing q-values for precursor identification.}
+  \item{q.cutoffs}{cutoff for the q-values. Either a single value or a numeric vector of same length as \code{q.columns}. Only precursors with q-values below the cutoffs will be retained.}
+  \item{extra.columns}{other columns to be read and included in the \code{genes} annotation data.frame.}
 }
 
 \details{
-DIA-NN (Demichev et al 2020) writes a main report file in long (data.frame) format, typically called \code{Report.tsv} or \code{Report.parquet}, containing normalized intensities for precursors ions.
+DIA-NN (Demichev et al 2020) writes a main report file in long (data.frame) format, typically called \code{report.tsv} or \code{report.parquet}, containing normalized intensities for precursors ions.
 \code{readDIANN} reads this file and produces an EList or EListRaw object.
 
 Version 1 of DIA-NN wrote the report file in tab-delimited format.
