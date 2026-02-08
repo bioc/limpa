@@ -1,6 +1,6 @@
 peptides2Proteins <- function(y, protein.id, sigma=0.5, dpc=c(-4,0.7), prior.mean=6, prior.sd=10, prior.logFC=2, standard.errors=FALSE, newton.polish=FALSE, verbose=FALSE, chunk=1000L)
 # Summarize peptide to protein log-expression for many proteins.
-# Created 10 July 2023. Last modified 9 March 2025.
+# Created 10 July 2023. Last modified 7 Feb 2026.
 {
 # Check y
   y <- as.matrix(y)
@@ -79,16 +79,20 @@ peptides2Proteins <- function(y, protein.id, sigma=0.5, dpc=c(-4,0.7), prior.mea
     if(standard.errors) stderr[i.protein,] <- out$standard.error
     last.row <- last.row + npeptides[i.protein]
     if(verbose) {
-      if(identical(i.protein %% chunk,0L)) message("Proteins: ", i.protein, " Peptides: ", last.row)
+      if(identical(i.protein %% chunk,0L)) {
+        Percent <- as.integer(100*(last.row/NRows))
+        message("Proteins: ", i.protein, "  Precursors: ", last.row, " (", Percent, "%)")
+      }
     }
   }
   if(verbose) {
-    message("Proteins: ", i.protein, " Peptides: ", last.row)
+    Percent <- as.integer(100*(last.row/NRows))
+    message("Proteins: ", i.protein, "  Precursors: ", last.row, " (", Percent, "%)")
   }
 
 # Collect output
   out <- list(E=z)
-  out$genes <- data.frame(NPeptides=npeptides,PropObs=rowMeans(nobs)/npeptides)
+  out$genes <- data.frame(NPrec=npeptides,PropObs=rowMeans(nobs)/npeptides)
   out$other$n.observations <- nobs
   if(standard.errors) out$other$standard.error <- stderr
   new("EList",out)

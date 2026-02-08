@@ -3,6 +3,31 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.3.6 (2026-02-08)}{\itemize{
+\item
+Change the terminology from "peptides" to "precursors" for the default unit of input data throughout the package.
+More discussion of precursors vs peptides and other levels of data in the vignette.
+Further clarification of the different levels of data that limpa can process.
+
+\item
+The output column `genes$NPeptides` from dpcQuant() renamed to `genes$NPrec`.
+
+\item
+Progress message from dpcQuant() and dpcQuantByRows() now uses "Precursors" instead of "Peptides" for number of rows.
+Percentage progress has been added.
+
+\item
+New argument `verbose` for readDIANN(). If `TRUE`, now gives message about number of filtered q-values.
+
+\item
+Bug fix to readDIANN() to avoid unnecessary message about `q.cutoffs` not being the correct length, when it is actually of length 1.
+Other code streamlining for readDIANN().
+
+\item
+Add filtering based on number of detected samples to DIA-NN and Spectronaut HYE case studies (on external website).
+}}
+
+
 \section{Version 1.3.5 (2026-01-31)}{\itemize{
 \item
 The upper limit of the y-axis in the plot from plotDPC() is now extended slightly to allow for jittering of the detection proportions. Previously some of the jittered proportions above 1 where not shown on the plot.

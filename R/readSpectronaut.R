@@ -8,7 +8,7 @@ readSpectronaut <- function(
 )
 # Read normal table output from Spectronaut.
 # Gordon Smyth and Mengbo Li
-# Created 18 December 2023. Last modified 10 October 2025.
+# Created 18 December 2023. Last modified 5 Feb 2026.
 {
   # Read Spectronaut report file
   if (!is.null(path)) file <- file.path(path, file)
@@ -17,11 +17,11 @@ readSpectronaut <- function(
   all.columns <- fread(file, sep = sep, nrows = 0L, showProgress = FALSE)
   all.columns <- colnames(all.columns)
 
-  Select <- c(run.column, precursor.column, qty.column, q.columns, extra.columns)
+  Select <- unique(c(run.column, precursor.column, qty.column, q.columns, extra.columns))
   if (any(!(Select %in% all.columns))) {
     no.in.Select <- setdiff(Select, all.columns)
     message(paste("Columns", paste(no.in.Select, collapse = ","), "not in data!", sep = " "))
-    message("Reading the rest of the columns only.")
+    message("Reading other columns.")
   }
   Select <- intersect(Select, all.columns)
   extra.columns <- intersect(extra.columns, all.columns)
@@ -32,20 +32,20 @@ readSpectronaut <- function(
   colnames(Report)[which(colnames(Report) == qty.column)] <- "Intensity"
 
   # Filter by imputed
-  if ("EG.IsImputed" %in% colnames(Report)) {
+  if (hasName(Report, "EG.IsImputed")) {
     message("Filtering out imputed values according to `EG.IsImputed`.")
     Report <- Report[Report$EG.IsImputed == FALSE, ]
   }
 
   # Filter by q-values
-  if (length(q.columns) > 0L) {
-    q.columns <- q.columns[q.columns %in% colnames(Report)]
+  if (length(q.columns)) {
+    q.columns <- q.columns[hasName(Report, q.columns)]
     if (!identical(length(q.cutoffs), length(q.columns))) {
       q.cutoffs <- rep(q.cutoffs[1], length(q.columns))
       message("Length of q-value columns does not match with length of q-value cutoffs.
       Use q.cutoffs[1] for all columns.")
     }
-    kp <- rep(TRUE, nrow(Report))
+    kp <- rep_len(TRUE, nrow(Report))
     for (qcol in seq_along(q.columns)) {
       kp <- kp & Report[[q.columns[qcol]]] <= q.cutoffs[qcol]
     }

@@ -6,7 +6,8 @@ readDIANN <- function(
   precursor.column = "Precursor.Id",
   qty.column = "Precursor.Normalised",
   q.columns = c("Q.Value", "Lib.Q.Value", "Lib.PG.Q.Value"), q.cutoffs = 0.01, 
-  extra.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic")
+  extra.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic"),
+  verbose = TRUE
   )
 # Read Report.tsv from DIA-NN output
 # Gordon Smyth and Mengbo Li
@@ -17,7 +18,7 @@ readDIANN <- function(
   if (!is.null(path)) file <- file.path(path, file)
 
   # Combine column-name vectors
-  Select <- c(run.column, precursor.column, qty.column, q.columns, extra.columns)
+  Select <- unique(c(run.column, precursor.column, qty.column, q.columns, extra.columns))
 
   # Detect format
   if(is.null(format)) {
@@ -55,36 +56,36 @@ readDIANN <- function(
   }
   Select <- intersect(Select, all.columns)
   extra.columns <- intersect(extra.columns, all.columns)
-  colnames(Report)[which(colnames(Report) == run.column)] <- "Run"
-  colnames(Report)[which(colnames(Report) == precursor.column)] <- "Precursor.Id"
-  colnames(Report)[which(colnames(Report) == qty.column)] <- "Intensity"
   
   # Filter by q-values
-  if (length(q.columns) > 0L) {
+  if (length(q.columns)) {
     if (!identical(length(q.cutoffs), length(q.columns))) {
+      if(length(q.cutoffs) > 1L) warning("Number of q.cutoffs doesn't match number of q.columns. Using q.cutoffs[1] for all columns.")
       q.cutoffs <- rep_len(q.cutoffs[1], length(q.columns))
-      if(length(q.cutoffs) > 0L) message("Length of q.cutoffs doesn't that of q.columns. Using q.cutoffs[1] for all columns.")
     }
-    kp <- rep_len(TRUE, nrow(Report))
+    NObs <- nrow(Report)
+    kp <- rep_len(TRUE, NObs)
     for (qcol in seq_along(q.columns)) {
       kp[ Report[[ q.columns[qcol] ]] > q.cutoffs[qcol] ] <- FALSE
     }
-    Report <- Report[kp, ]
+    Report <- Report[kp,]
+    if(nrow(Report) < NObs && verbose) message("Filtered ",NObs-nrow(Report)," q-values above q.cutoffs")
   }
   
   # Convert intensities to wide format
-  Samples <- unique(Report$Run)
-  Precursors <- unique(Report$Precursor.Id)
+  Samples <- unique(Report[[run.column]])
+  Precursors <- unique(Report[[precursor.column]])
   y <- matrix(0, length(Precursors), length(Samples))
-  mSample <- match(Report$Run, Samples)
-  mPrecursor <- match(Report$Precursor.Id, Precursors)
+  mSample <- match(Report[[run.column]], Samples)
+  mPrecursor <- match(Report[[precursor.column]], Precursors)
   i <- mPrecursor + (mSample - 1L) * length(Precursors)
-  y[i] <- Report$Intensity
+  if(anyDuplicated(i)) warning("Duplicated values with same Run and Precursor.Id")
+  y[i] <- Report[[qty.column]]
   colnames(y) <- Samples
   rownames(y) <- Precursors
   
   # Precursor annotation in wide format
-  d <- duplicated(Report$Precursor.Id)
+  d <- duplicated(Report[[precursor.column]])
   Genes <- Report[!d, extra.columns, drop = FALSE]
   colnames(Genes) <- extra.columns
   row.names(Genes) <- Precursors

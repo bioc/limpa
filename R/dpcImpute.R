@@ -15,7 +15,7 @@ dpcImpute.default <- function(y, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=10
 
 dpcImpute.EList <- function(y, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000L, ...)
 # Use the DPC to quantify protein expression values by maximum posterior.
-# Created 27 Dec 2024. Last modified 6 Jan 2026.
+# Created 27 Dec 2024. Last modified 7 Feb 2026.
 {
 # Check dpc
   if(is.list(dpc)) dpc <- dpc$dpc
@@ -50,7 +50,7 @@ dpcImpute.EList <- function(y, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000
   rownames(y.protein) <- rownames(y)
   y.protein$targets <- y$targets
   y.protein$dpc <- dpc
-  y.protein$genes$NPeptides <- NULL
+  y.protein$genes$NPrec <- NULL
   y.protein
 }
 

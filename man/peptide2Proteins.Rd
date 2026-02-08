@@ -13,8 +13,8 @@ peptides2Proteins(y, protein.id, sigma = 0.5, dpc = c(-4, 0.7),
 
 \arguments{
   \item{y}{
-    a numeric matrix of log-expression values.
-    Columns are samples and rows are peptides or precursors.
+    a numeric matrix of log-intensity values.
+    Columns are samples and rows are quantification features, usually precursors.
   }
   \item{protein.id}{
     protein IDs.

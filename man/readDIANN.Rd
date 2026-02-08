@@ -12,7 +12,8 @@ readDIANN(file = "report.parquet", path = NULL, format = NULL, sep = "\t", log =
   qty.column = "Precursor.Normalised",
   q.columns = c("Q.Value", "Lib.Q.Value", "Lib.PG.Q.Value"),
   q.cutoffs = 0.01, 
-  extra.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic"))
+  extra.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic"),
+  verbose = TRUE)
 }
 
 \arguments{
@@ -27,6 +28,7 @@ readDIANN(file = "report.parquet", path = NULL, format = NULL, sep = "\t", log =
   \item{q.columns}{character vector of column names containing q-values for precursor identification.}
   \item{q.cutoffs}{cutoff for the q-values. Either a single value or a numeric vector of same length as \code{q.columns}. Only precursors with q-values below the cutoffs will be retained.}
   \item{extra.columns}{other columns to be read and included in the \code{genes} annotation data.frame.}
+  \item{verbose}{logical, whether to send informative progress messages.}
 }
 
 \details{
@@ -36,6 +38,8 @@ DIA-NN (Demichev et al 2020) writes a main report file in long (data.frame) form
 Version 1 of DIA-NN wrote the report file in tab-delimited format.
 Version 2 of DIA-NN writes the report in Apache Parquet format (\url{https://github.com/vdemichev/DiaNN/releases}). 
 In any case, \code{readDIANN} can read the report file directly or, alternatively, one can read the file into a data.frame, and use \code{readDIANN} to process the long-format data.frame into a limma EList or EListRaw object. 
+
+An example analysis using this function is shown here: \url{https://smythlab.github.io/limpa/HYE100-DIANN.html}.
 }
 
 \value{

@@ -2,8 +2,8 @@ filterSingletonPeptides <- function(y, ...)
 UseMethod("filterSingletonPeptides")
 
 filterSingletonPeptides.default <- function(y, protein.group, min.n.peptides=2L, ...)
-# Remove proteins with too few peptides from matrix
-# Created 10 August 2023. Last modified 24 December 2024.
+# Remove proteins with too few features from matrix
+# Created 10 August 2023. Last modified 7 Feb 2026.
 {
 # Check input
   if(anyNA(protein.group)) stop("NAs not allowed in protein.group")
@@ -19,11 +19,11 @@ filterSingletonPeptides.default <- function(y, protein.group, min.n.peptides=2L,
 # Count peptides
   ProteinStart <- which(!duplicated(protein.group))
   ProteinStart <- c(ProteinStart,nrow(y)+1L)
-  NPeptides <- ProteinStart[-1L] - ProteinStart[-length(ProteinStart)]
-  NPeptidesLong <- rep(NPeptides,NPeptides)
+  NPrec <- ProteinStart[-1L] - ProteinStart[-length(ProteinStart)]
+  NPrecLong <- rep(NPrec,NPrec)
 
 # Filter
-  y[NPeptidesLong >= min.n.peptides,,drop=FALSE]
+  y[NPrecLong >= min.n.peptides,,drop=FALSE]
 }
 
 filterSingletonPeptides.EList <- filterSingletonPeptides.EListRaw <- function(y, protein.group="Protein.Group", min.n.peptides=2, ...)
@@ -50,10 +50,10 @@ filterSingletonPeptides.EList <- filterSingletonPeptides.EListRaw <- function(y,
 # Count peptides
   ProteinStart <- which(!duplicated(protein.group))
   ProteinStart <- c(ProteinStart,nrow(y)+1L)
-  NPeptides <- ProteinStart[-1L] - ProteinStart[-length(ProteinStart)]
-  NPeptidesLong <- rep(NPeptides,NPeptides)
-  y$genes$NPeptides <- NPeptidesLong
+  NPrec <- ProteinStart[-1L] - ProteinStart[-length(ProteinStart)]
+  NPrecLong <- rep(NPrec,NPrec)
+  y$genes$NPrec <- NPrecLong
 
 # Filter
-  y[NPeptidesLong >= min.n.peptides,]
+  y[NPrecLong >= min.n.peptides,]
 }

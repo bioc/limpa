@@ -1,15 +1,17 @@
 ---
 title: Analyzing mass spectrometry data with limpa
 author: "Mengbo Li and Gordon K. Smyth"
-date: "First version 30 December 2024, Last revised 31 January 2026"
+date: "First version 30 December 2024, Last revised 7 February 2026"
 abstract: >
   Mass spectrometry is a powerful tool in biomedical research.
-  Advancements in label-free methods and MS instruments have enabled high-throughput proteomics profiling of biological samples with the increasingly deeper coverage of the proteome, but missing values are still ubiquitous in MS-based proteomics data.
+  Technology advances have enabled high-throughput proteomics profiling of biological samples with the increasingly deeper coverage of the proteome, but missing values are still ubiquitous in MS-based proteomics data.
   Single-cell MS-based proteomics has also started to become available, with increased frequency of missing values.
-  The limpa package implements a pipeline for quantification and differential expression analysis of mass-spectrometry (MS) proteomics data, with probabilistic recovery of information from missing values.
+  The limpa package implements a pipeline for quantification and differential expression analysis of mass-spectrometry (MS) proteomics data, incorporating probabilistic recovery of information from missing values.
   The package accepts precursor-level data, usually including missing values, and produces complete protein quantifications without the need for imputation.
+  More generally, the package can accept intensity data at any feature level (fragments, precursor ions, peptides, PTMs) and can quantify abundance at any higher or equal level (PTMs, peptides, proteins).
   A key feature is the ability to quantify an expression value for every protein and every sample, regardless of the number of quantified precursors for each protein or the number of missing values at the precursor level.
   Another key feature is the ability to propagate quantification uncertainty through to the differential expression analysis, using variance modeling and precision weights, increasing statistical power while avoiding false discoveries.
+  Each protein quantification is associated with a standard error, allowing limpa to appropriately downweight less reliable quantifications.
   limpa produces a linear model object suitable for downstream analysis with the limma package, allowing complex experimental designs and other downstream tasks such as the gene ontology or pathway analysis. 
   The package name ("limpa") is an acronym for "Linear Models for Proteomics Data".
 
@@ -43,7 +45,13 @@ The only other information required to start a limpa analysis is a vector specif
 Precursor intensities typically include missing values for some samples, which cause considerable problems for downstream analyses.
 The missing values can't just be ignored, because they occur more often at low intensities, and missing value imputation also introduces biases and problems.
 limpa uses statistical models developed by Li & Smyth (2023) to evaluate how much information can be recovered from the missing values, quantifying the overall missing value "mechanism" into a detection probability curve (DPC).
-limpa uses the DPC, together with a Bayesian model, to summarize the precursor quantifications into protein-level quantifications and to undertake limma-based differential expression analyses (Li 2024, Ritchie et al 2015).
+limpa uses the DPC, together with a Bayesian model, to summarize the precursor quantifications into protein-level quantifications and to undertake limma-based differential expression analyses (Ritchie et al 2015, Li 2024, Li et al 2025).
+
+limpa has chosen to focus on precursor ions (aka peptide ions), because they are the basic quantification unit for both DDA and DIA proteomics.
+More generally, however, the package can accept intensity data at any feature level (fragments, precursor ions, peptides, proteins, PTMs) and can quantify abundance at any equal or higher level (PTMs, peptides, proteins).
+All that is required is a matrix of log-intensities and an annotation vector identifying the higher level annotation group associated with each feature.
+limpa can therefore quantify proteins from fragment or precursor or peptide intensities, or can even work directly on a matrix of protein-level values, such as from maxLFQ, although lower level input data is recommended if available.
+limpa can also quantify expression at the peptide level, starting from fragments or precursors, and can conduct differential isoform usage analyses based on the resulting peptide quantifications.
 
 # How to get help
 
@@ -62,11 +70,11 @@ Quantification and differential analysis of mass spectrometry proteomics data wi
 
 # Quick start
 
-If `y.peptide` is a matrix of precursor-level log2-intensities (including NAs), `protein.id` is a vector of protein IDs, and `design` is a design matrix, then the following code will quantify complete log2-expression for the proteins without missing values and will conduct a differential expression analysis defined by the design matrix.
+If `y.prec` is a matrix of precursor-level log2-intensities (including NAs), `protein.id` is a vector of protein IDs, and `design` is a design matrix, then the following code will quantify complete log2-expression for the proteins without missing values and will conduct a differential expression analysis defined by the design matrix.
 ```
 library(limpa)
-dpcest <- dpc(y.peptide)
-y.protein <- dpcQuant(y.peptide, protein.id, dpc=dpcest)
+dpcest <- dpc(y.prec)
+y.protein <- dpcQuant(y.prec, protein.id, dpc=dpcest)
 fit <- dpcDE(y.protein, design)
 fit <- eBayes(fit)
 topTable(fit)
@@ -79,35 +87,35 @@ First, generate the dataset:
 ```{r sim}
 library(limpa)
 set.seed(20241230)
-y.peptide <- simProteinDataSet()
+y.prec <- simProteinDataSet()
 ```
-The dataset is stored as a limma EList object, with components `E` (log2-expression), `genes` (feature annotation) and `targets` (sample annotation).
+The dataset is stored as a limma EList object, with components `E` (log2-intensities), `genes` (feature annotation) and `targets` (sample annotation).
 The simulation function can generate any number of precursors or proteins but, by default, the dataset has 100 precursors belonging to 25 proteins and the samples are in two groups with $n=5$ replicates in each group.
 About 40% of the expression values are missing.
 
 ```{r meanNA}
-dim(y.peptide)
-head(y.peptide$genes)
-table(y.peptide$targets$Group)
-mean(is.na(y.peptide$E))
+dim(y.prec)
+head(y.prec$genes)
+table(y.prec$targets$Group)
+mean(is.na(y.prec$E))
 ```
 
 Next we estimate the intercept and slope of the detection probability curve, which relates the probability of detection to the underlying precursor log-intensity level on the logit scale.
 ```{r dpc}
-dpcest <- dpc(y.peptide)
+dpcest <- dpc(y.prec)
 dpcest$dpc
 plotDPC(dpcest)
 ```
 
 Then we use the DPC to quantify the protein log2-expression values, using the DPC to represent the missing values.
 ```{r dpcQuant}
-y.protein <- dpcQuant(y.peptide, "Protein", dpc=dpcest)
+y.protein <- dpcQuant(y.prec, "Protein", dpc=dpcest)
 ```
 There are no longer any missing values, and the samples now cluster into groups.
 The `plotMDSUsingSEs()` function is similar to `plotMDS()` in the limma package, but takes account of the standard errors generated by `dpcQuant()`.
 ```{r plotMDS}
 plotMDSUsingSEs(y.protein)
-Group <- factor(y.peptide$targets$Group)
+Group <- factor(y.prec$targets$Group)
 Group.color <- Group
 levels(Group.color) <- c("blue","red")
 plotMDSUsingSEs(y.protein, pch=16, col=as.character(Group.color))
@@ -141,28 +149,28 @@ plotProtein(y.protein, "Protein23", col=as.character(Group.color))
 For some proteomics applications, such as PTM or isoform analyses, it is desirable to undertake quantification and differential expression analysis for every row of data instead of summarizing multiple rows into proteins.
 To impute and quantify on a row-wise base, use the `dpcQuantByRow` function instead of `dpcQuant`, for example
 ```
-y.peptide.complete <- dpcQuantByRow(y.peptide, dpc=dpcest)
+y.prec.complete <- dpcQuantByRow(y.prec, dpc=dpcest)
 ```
 The input is similar as for `dpcQuant` except there is no need to specify protein IDs, and the downstream DE analysis is the same.
 
 # Data input
 
 The limpa pipeline starts with a matrix of precursor intensities (rows for precursors and columns for samples) and a character vector of protein IDs.
-(Rows can alternatively correspond to peptides, proteins or PTMs, see below).
+(The introduction here will focus on the protein-level differential expression based on precursor level input intensities, although other input and quantification levels are possible, briefly discussed below.)
 The input data can be conveniently supplied as a limma EList object, but a plain numeric matrix containing the log-intensities is also acceptable.
 Non-detected precursors should be entered as `NA`. 
 
 limpa includes the functions `readDIANN()`, `readSpectronaut()`, `readFragPipe()` and `readMaxQuant()`, which read precursor level data output by the popular mass spectrometry quantification tools DIA-NN, Spectronaut, FragPipe, and MaxQuant respectively.
-In each case, limpa directly reads files output by those tools without any need for prior processing by the analyst.
+In each case, limpa directly reads standard format files output by those tools without any need for prior processing by the analyst.
 
 The `readDIANN()` function reads the main DIA-NN "Report" file, and it supports either the tab-delimited text format written by DIA-NN version 1 or the Apache Parquet format used by DIA-NN version 2.
 For example,
 ```{r, eval = FALSE}
-y.peptide <- readDIANN("Report.tsv")
+y.prec <- readDIANN("Report.tsv")
 ```
 will read a `Report.tsv` file written by DIA-NN v1 from the current working directory, and
 ```{r, eval = FALSE}
-y.peptide <- readDIANN("Report.parquet")
+y.prec <- readDIANN("Report.parquet")
 ```
 will read a `Report.parquet` file written by DIA-NN v2.
 The format can be specified explicity but, by default, is detected automatically from the Report file name.
@@ -170,13 +178,13 @@ The format can be specified explicity but, by default, is detected automatically
 The `readDIANN()` function also includes the option to filter peptide-precursors based on Q-values.
 While limpa is robust to different filtering choices, we recommend the following settings for data searched with match-between-run (MBR):
 ```{r, eval = FALSE}
-y.peptide <- readDIANN("Report.tsv",
+y.prec <- readDIANN("Report.tsv",
              q.columns = c("Q.Value","Lib.Q.Value","Lib.PG.Q.Value"),
              q.cutoffs = 0.01)
 ```
 and the following settings if searched without MBR:
 ```{r, eval = FALSE}
-y.peptide <- readDIANN("Report.tsv",
+y.prec <- readDIANN("Report.tsv",
              q.columns = c("Q.Value","Global.Q.Value","Global.PG.Q.Value"),
              q.cutoffs = 0.01)
 ```
@@ -184,17 +192,17 @@ These settings follow suggestions from Thierry Nordmann (Max Planck Institute of
 
 After reading in the data, it is common to filter out non-proteotypic peptides by
 ```{r, eval = FALSE}
-y.peptide <- filterNonProteotypicPeptides(y.peptide)
+y.prec <- filterNonProteotypicPeptides(y.prec)
 ```
 and to filter out compound protein groups (protein groups mapped to two or more protein IDs) by
 ```{r, eval = FALSE}
-y.peptide <- filterCompoundProteins(y.peptide)
+y.prec <- filterCompoundProteins(y.prec)
 ```
 These filtering steps are not required by limpa but help with downstream interpretation of the results.
 
 Protein groups can also be filtered by number of peptides, typically to remove proteins with only one detected precursor:
 ```{r, eval = FALSE}
-y.peptide <- filterSingletonPeptides(y.peptide, min.n.peptides = 2)
+y.prec <- filterSingletonPeptides(y.prec, min.n.peptides = 2)
 ```
 This step is entirely optional.
 We generally recommend that users keep all proteins in order to retain maximum information.
@@ -264,10 +272,10 @@ limpa can accept a matrix of PTM-level intensities, and can undertake differenti
 Again, one would use `dpcQuantByRow` in this case instead of `dpcQuant`.
 The same approach can be used for IP-MS (Corso et al 2026).
 
-# Differential precursor or peptide usage
+# Differential peptide usage
 
-A third application for which `dpcQuantByRow` is used instead of `dpcQuant` is for detecting differential isoform usage.
-To detect differential precursor usage for each protein between experimental conditions, one fits precursor-level linear models using `dpcDE`, then `limma::diffSplice` tests for differential usage.
+limpa can also detect proteins showing differential isoform usage between conditions.
+To detect differential peptide usage for each protein between experimental conditions, first use `dpcQuant` to quantify expression at the peptide level, then use `dpcDE` to fit peptide-level linear models, after which `limma`'s `diffSplice` function tests for differential usage.
 The full pipeline is shown in a case study (see link below).
 
 # Very large datasets
