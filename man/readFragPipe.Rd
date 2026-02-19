@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{readFragPipe}
 \alias{readFragPipe}
 \title{Read Peptide-Precursor Intensities From FragPipe Output}
@@ -31,7 +32,9 @@ readFragPipe(
 }
 
 \details{
-FragPipe (Yu et al 2023) writes a file in wide format called \code{combine_peptide.tsv} containing normalized intensities for peptide precursors from all experimental samples.
+FragPipe (Yu et al 2023) writes a file in wide format called \code{combine_peptide.tsv} containing normalized intensities for peptide precursors from all experimental samples \url{https://fragpipe.nesvilab.org/docs/tutorial_fragpipe_outputs.html}.
+Rows correspond to precursor ions.
+The names of the columns containining precursor intensities contain the name of the experiment (biological sample) followed by \code{" Intensity"}, and the \code{qty.column.key} argument is used to identify these columns.
 \code{readFragPipe} reads this file and produces an EList or EListRaw object.
 }
 
@@ -43,10 +46,12 @@ Peptide precursor and protein annotation is stored in the \code{genes} output co
 }
 
 \references{
-Yu F, Teo GC, Kong AT, Fr\"olich K, Li GX, Demichev V, Nesvizhskii AI (2023).
+Yu F, Teo GC, Kong AT, Frölich K, Li GX, Demichev V, Nesvizhskii AI (2023).
 Analysis of DIA proteomics data using MSFragger-DIA and FragPipe computational platform.
 \emph{Nature Communications} 14, 4154.
 \doi{10.1038/s41467-023-39869-5}
+
+Tutorial on FragPipe Outputs: \url{https://fragpipe.nesvilab.org/docs/tutorial_fragpipe_outputs.html}.
 }
 
 \examples{

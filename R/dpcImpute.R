@@ -1,21 +1,21 @@
-dpcImpute <- function(y, ...)
-  UseMethod("dpcImpute")
+dpcQuantByRow <- function(y, ...)
+  UseMethod("dpcQuantByRow")
 
-dpcImpute.default <- function(y, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000L, ...)
+dpcQuantByRow.default <- function(y, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000L, ...)
 # Use the DPC to quantify protein expression values by maximum posterior.
-# Created 25 Feb 2025. Last modified 25 Feb 2025.
+# Created 25 Feb 2025. Last modified 19 Feb 2026.
 {
 # Check y
   y <- as.matrix(y)
 
 # Construct EList and pass to EList method
   z <- new("EList",list(E=y))
-  dpcImpute(z,dpc=dpc,dpc.slope=dpc.slope,verbose=verbose,chunk=chunk,...)
+  dpcQuantByRow(z,dpc=dpc,dpc.slope=dpc.slope,verbose=verbose,chunk=chunk,...)
 }
 
-dpcImpute.EList <- function(y, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000L, ...)
+dpcQuantByRow.EList <- function(y, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000L, ...)
 # Use the DPC to quantify protein expression values by maximum posterior.
-# Created 27 Dec 2024. Last modified 7 Feb 2026.
+# Created 27 Dec 2024. Last modified 19 Feb 2026.
 {
 # Check dpc
   if(is.list(dpc)) dpc <- dpc$dpc
@@ -54,6 +54,10 @@ dpcImpute.EList <- function(y, dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000
   y.protein
 }
 
-dpcQuantByRow <- dpcImpute
-dpcQuantByRow.default <- dpcImpute.default
-dpcQuantByRow.EList <- dpcImpute.EList
+dpcImpute <- function(...)
+# dpcImpute is the older name for dpcQuantByRow and is now deprecated.
+# 19 Feb 2026.
+{
+  message("dpcImpute has been renamed to dpcQuantByRow, please update code.")
+  dpcQuantByRow(...)
+}

@@ -19,8 +19,6 @@ importFrom("limma", "arrayWeights", "asMatrixWeights", "chooseLowessSpan", "dupl
 
 importClassesFrom("limma", "EList", "EListRaw", "MDS")
 
-S3method(dpcImpute,default)
-S3method(dpcImpute,EList)
 S3method(dpcQuant,default)
 S3method(dpcQuant,EList)
 S3method(dpcQuantByRow,default)

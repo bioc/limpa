@@ -48,3 +48,5 @@ Group <- factor(y.peptide$targets$Group)
 design <- model.matrix(~Group)
 fit <- dpcDE(y.protein, design)
 }
+
+\concept{Differential expression}

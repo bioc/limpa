@@ -6,8 +6,6 @@
 \alias{dpcQuantByRow.default}
 \alias{dpcQuantByRow.EList}
 \alias{dpcImpute}
-\alias{dpcImpute.default}
-\alias{dpcImpute.EList}
 \title{Quantify Proteins Using the DPC}
 
 \description{
@@ -51,8 +49,9 @@ Use the DPC to quantify protein expression values for a series of samples from p
 }
 
 \details{
-Implements the DPC-Quant method, which quantifies protein log2-expression values from precursor data.
-The method represents missing values probabilistically using the PDC and returns maximum posterior estimates for all the protein log2-expression values, so that there are no missing values in the final summary.
+Implements the DPC-Quant method, which quantifies protein log2-expression values from precursor ion data.
+More generally, the function can summarize row-wise data to any higher annotation level, for example precursors to peptides or peptides to proteins.
+The method represents missing values probabilistically using the DPC and returns maximum posterior estimates for all the protein log2-expression values, so that there are no missing values in the final summary.
 
 The \code{dpc} function (or \code{dpcON} or \code{dpcCN}) is usually used to estimate the detection probability curve (DPC) before running \code{dpcQuant}, however a preset DPC slope can also be used.
 If the \code{dpc} argument is \code{NULL}, then \code{dpc.slope} will be used as the DPC together with a DPC intercept estimated by \code{estimateDPCIntercept}.
@@ -60,6 +59,11 @@ If the \code{dpc} argument is \code{NULL}, then \code{dpc.slope} will be used as
 The output from \code{dpcQuant} can be input to \code{dpcDE}.
 
 \code{dpcQuantByRow} estimates log2-intensities row-wise without summarization by treating each row as a separate protein.
+}
+
+\note{
+  The \code{dpcQuantByRows} function was previously called \code{dpcImpute} in limpa 3.2.0.
+  The function was renamed in limpa 3.3.0 to clarify that the function is the same as \code{dpcQuant} but for each row (precursor or feature) without higher level summarization, and also to clarify that the limpa estimation process is not equivalent to straightforward imputation.
 }
 
 \value{

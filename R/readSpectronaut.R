@@ -1,84 +1,36 @@
 readSpectronaut <- function(
-  file="Report.tsv", path=NULL, sep="\t", log=TRUE,
-  run.column = "R.Raw File Name",
-  precursor.column = "EG.PrecursorId",
-  qty.column = "EG.TotalQuantity (Settings)",
-  q.columns = c("EG.Qvalue", "PG.Qvalue"), q.cutoffs = 0.01,
-  extra.columns = c("PG.ProteinAccessions", "EG.IsImputed")
+  file="Report.tsv",
+  path=NULL,
+  sep="\t",
+  sample.column = "R.FileName",
+  precursor.column = c("EG.ModifiedSequence","FG.Charge"),
+  intensity.column = "EG.TotalQuantity (Settings)",
+  annotation.columns = c("PG.ProteinAccessions","PG.Genes"),
+  q.columns = c("EG.Qvalue", "PG.Qvalue"),
+  q.cutoffs = 0.01,
+  isimputed.column = "EG.IsImputed",
+  censor.value=1,
+  log=TRUE,
+  verbose=TRUE
 )
-# Read normal table output from Spectronaut.
+# Read normal (wide) report file from Spectronaut.
 # Gordon Smyth and Mengbo Li
-# Created 18 December 2023. Last modified 5 Feb 2026.
+# Created 18 December 2023. Last modified 15 Feb 2026.
 {
-  # Read Spectronaut report file
-  if (!is.null(path)) file <- file.path(path, file)
-
-  # Read column names
-  all.columns <- fread(file, sep = sep, nrows = 0L, showProgress = FALSE)
-  all.columns <- colnames(all.columns)
-
-  Select <- unique(c(run.column, precursor.column, qty.column, q.columns, extra.columns))
-  if (any(!(Select %in% all.columns))) {
-    no.in.Select <- setdiff(Select, all.columns)
-    message(paste("Columns", paste(no.in.Select, collapse = ","), "not in data!", sep = " "))
-    message("Reading other columns.")
-  }
-  Select <- intersect(Select, all.columns)
-  extra.columns <- intersect(extra.columns, all.columns)
-  Report <- fread(file, sep = sep, select = Select, 
-  data.table = FALSE, showProgress = FALSE)
-  colnames(Report)[which(colnames(Report) == run.column)] <- "Run"
-  colnames(Report)[which(colnames(Report) == precursor.column)] <- "Precursor.Id"
-  colnames(Report)[which(colnames(Report) == qty.column)] <- "Intensity"
-
-  # Filter by imputed
-  if (hasName(Report, "EG.IsImputed")) {
-    message("Filtering out imputed values according to `EG.IsImputed`.")
-    Report <- Report[Report$EG.IsImputed == FALSE, ]
-  }
-
-  # Filter by q-values
-  if (length(q.columns)) {
-    q.columns <- q.columns[hasName(Report, q.columns)]
-    if (!identical(length(q.cutoffs), length(q.columns))) {
-      q.cutoffs <- rep(q.cutoffs[1], length(q.columns))
-      message("Length of q-value columns does not match with length of q-value cutoffs.
-      Use q.cutoffs[1] for all columns.")
-    }
-    kp <- rep_len(TRUE, nrow(Report))
-    for (qcol in seq_along(q.columns)) {
-      kp <- kp & Report[[q.columns[qcol]]] <= q.cutoffs[qcol]
-    }
-    Report <- Report[kp, ]
-  }
-
-  # Convert intensities to wide format
-  Samples <- unique(Report$Run)
-  Precursors <- unique(Report$Precursor.Id)
-  y <- matrix(0, length(Precursors), length(Samples))
-  mSample <- match(Report$Run, Samples)
-  mPrecursor <- match(Report$Precursor.Id, Precursors)
-  i <- mPrecursor + (mSample - 1L) * length(Precursors)
-  y[i] <- Report$Intensity
-  colnames(y) <- Samples
-  rownames(y) <- Precursors
-
-  # Precursor annotation in wide format
-  d <- duplicated(Report$Precursor.Id)
-  Genes <- data.frame(Report[!d, ])[, setdiff(extra.columns, "EG.IsImputed"), drop = FALSE]
-  row.names(Genes) <- Precursors
-
-  # Output either unlogged EListRaw (with zeros) or logged Elist (with NAs)
-  if (log) {
-    y[y <= 1L] <- NA
-  # Remove rows that are missing in all samples
-    ind <- rowMeans(is.na(y)) < 1
-    y <- y[ind, , drop = FALSE]
-    Genes <- Genes[ind, , drop = FALSE]
-  # Log
-    y <- log2(y)
-    new("EList", list(E = y, genes = Genes))
-  } else {
-    new("EListRaw", list(E = y, genes = Genes))
-  }
+  EListFromLongFormatFile(
+    file=file,
+    path=path,
+    format="tsv",
+    sep=sep,
+    sample.column=sample.column,
+    feature.column=precursor.column,
+    intensity.column=intensity.column,
+    annotation.columns=annotation.columns,
+    q.columns=q.columns,
+    q.cutoffs=q.cutoffs,
+    isimputed.column=isimputed.column,
+    censor.value=censor.value,
+    log=log,
+    verbose=verbose
+  )
 }

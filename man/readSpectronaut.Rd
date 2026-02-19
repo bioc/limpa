@@ -1,44 +1,97 @@
+\encoding{UTF-8}
 \name{readSpectronaut}
 \alias{readSpectronaut}
-\title{Read Peptide-Precursor Intensities From Spectronaut Output}
+\title{Read Spectronaut Normal Report File}
 \description{
-Read Spectronaut Reports.tsv file into EList object.
+Read a Spectronaut Normal Report file into an EList or EListRaw object.
 }
 
 \usage{
 readSpectronaut(
-  file = "Report.tsv", path = NULL, sep = "\t", log = TRUE,
-  run.column = "R.Raw File Name",
-  precursor.column = "EG.PrecursorId",
-  qty.column = "EG.TotalQuantity (Settings)",
-  q.columns = c("EG.Qvalue", "PG.Qvalue"), q.cutoffs = 0.01,
-  extra.columns = c("PG.ProteinAccessions", "EG.IsImputed")
+  file = "Report.tsv",
+  path = NULL,
+  sep = "\t",
+  sample.column = "R.FileName",
+  precursor.column = c("EG.ModifiedSequence","FG.Charge"),
+  intensity.column = "EG.TotalQuantity (Settings)",
+  annotation.columns = c("PG.ProteinAccessions","PG.Genes"),
+  q.columns = c("EG.Qvalue", "PG.Qvalue"),
+  q.cutoffs = 0.01,
+  isimputed.column = "EG.IsImputed",
+  censor.value = 1,
+  log = TRUE,
+  verbose = TRUE
 )
 }
 
 \arguments{
-  \item{file}{the name of the file from which the data are to be read.}
-  \item{path}{character string giving the directory containing the file. Defaults to the current working directory.}
-  \item{sep}{the field separator character}
-  \item{log}{logical. If \code{TRUE} then intensities will be returned on the log2 scale, otherwise unlogged with zeros.}
-  \item{run.column}{column containing run. String of length 1L.}
-  \item{precursor.column}{column containing precursor IDs. String of length 1L.}
-  \item{qty.column}{column containing intensities. String of length 1L.}
-  \item{q.columns}{column headings in the Spectronaut output containing q-values for peptide identification. Character vector.}
-  \item{q.cutoffs}{cutoffs to apply to the q-value columns. Only peptides with values below the cutoffs will be retained. Numeric vector of same length as \code{q.columns}.}
-  \item{extra.columns}{extra columns that are appended to the precursor annotation matrix.}
+  \item{file}{
+    name of the Normal Report file from which the data are to be read.
+  }
+  \item{path}{
+    character string giving the directory containing the file.
+    Defaults to the current working directory.
+  }
+  \item{sep}{
+    the field separator character.
+    Spectronaut normally writes tab-delimited files, but this argument can be used to read comma-separated files if necessary.
+  }
+  \item{sample.column}{
+    name of column containing run (sample) IDs.
+  }
+  \item{precursor.column}{
+    name of column containing precursor IDs.
+    Can be character vector of length two containing the names of the peptide sequence and charge columns, which will then be read separately and pasted together to form a precursor ID.
+  }
+  \item{intensity.column}{
+    name of column containing precursor intensities.
+  }
+  \item{annotation.columns}{
+    names of other columns to be read and included in the output \code{genes} data.frame annotating the precursors and proteins.
+  }
+  \item{q.columns}{
+    names of columns containing q-values for peptide or protein identification.
+  }
+  \item{q.cutoffs}{
+    cutoffs to apply to the q-value columns.
+    Either a single value or a numeric vector of the same length as \code{q.columns}.
+    Only features with all q-values below the corresponding cutoffs will be retained.
+  }
+  \item{isimputed.column}{
+    name of column indicating whether the intensity was imputed.
+    The column should contain \code{TRUE/FALSE} values.
+    Any \code{TRUE} values will be replaced with NAs.}
+  \item{censor.value}{
+    any intensities less than or equal to this value will be replaced by NAs.
+    Spectronaut uses intensity values of 0 or 1 as a placeholder to indicate indetermined intensities.
+  }
+  \item{log}{
+    logical.
+    If \code{TRUE} then intensities will be returned on the log2 scale, otherwise unlogged.
+  }
+  \item{verbose}{
+    logical, whether to send informative progress messages.
+    Set this to \code{FALSE} if you want the function to run quietly.
+  }
 }
 
 \details{
-Spectronaut (https://biognosys.com/software/spectronaut/) writes a file in long (data.frame) format, typically called \code{Report.tsv}, containing normalized intensities for peptide precursors.
+The "Normal Report" file from Spectronaut (https://biognosys.com/software/spectronaut/) is a long format file, typically called \code{Report.tsv}, which contains normalized intensities for precursor ions.
 \code{readSpectronaut} reads this file and produces an EList or EListRaw object.
 }
 
 \value{
-If \code{log=FALSE}, an EListRaw object containing precursor-level unlogged intensities with zeros and protein annotation.
-If \code{log=TRUE}, an EList object containing precursor-level log2 intensities with NAs and protein annotation.
-Rows are peptide-precursors and columns are samples.
-Peptide precursor and protein annotation is stored in the \code{genes} output component.
+If \code{log=FALSE}, an EListRaw object containing precursor-level unlogged intensities with precursor and protein annotation.
+If \code{log=TRUE}, an EList object containing precursor-level log2 intensities with precursor and protein annotation.
+Rows are precursor ions and columns are samples.
+Precursor and protein annotation is stored in the \code{genes} output component.
+}
+
+\references{
+Yu Z, Du A, Xu X, Li Y, Ma X, Zhang W, Zhang Y, Chu IK, Siu KM (2026).
+Spectronaut and DIA-NN: a comparison of their performance in the analysis of lung adenocarcinoma biopsies.
+\emph{ACS Omega} 11(5) 8080-8093.
+\doi{10.1021/acsomega.5c10421}
 }
 
 \seealso{
@@ -48,7 +101,7 @@ Peptide precursor and protein annotation is stored in the \code{genes} output co
 \examples{
 \dontrun{
 y <- readSpectronaut()
-dpcfit <- dpc(y)
+dpcest <- dpc(y)
 }
 }
 

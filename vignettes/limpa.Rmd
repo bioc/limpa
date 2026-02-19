@@ -1,7 +1,7 @@
 ---
 title: Analyzing mass spectrometry data with limpa
 author: "Mengbo Li and Gordon K. Smyth"
-date: "First version 30 December 2024, Last revised 7 February 2026"
+date: "First version 30 December 2024, Last revised 8 February 2026"
 abstract: >
   Mass spectrometry is a powerful tool in biomedical research.
   Technology advances have enabled high-throughput proteomics profiling of biological samples with the increasingly deeper coverage of the proteome, but missing values are still ubiquitous in MS-based proteomics data.
@@ -290,6 +290,10 @@ For very large datasets with 1000s of samples, we suggest an alternative pipelin
 * **[Case studies with real data](https://github.com/smythlab/limpa/)**
 * **[Frequently asked questions](https://smythlab.github.io/limpa/FAQ.html)**
 * **[Reference Manual (pdf)](https://bioconductor.org/packages/release/bioc/manuals/limpa/man/limpa.pdf)**
+
+# Acknowledgements
+
+The authors are grateful for comments and suggestions from many individual including Jumana Yousef, Jonathan Algoo, Samuel Granjeaud and Julia Marchingo.
 
 # Funding
 

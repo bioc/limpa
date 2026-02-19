@@ -3,9 +3,32 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.3.7 (2026-02-19)}{\itemize{
+\item
+New function filterByDetection(), to choose proteins detected in at least a specified number of samples.
+
+\item
+New function EListFromLongFormatFile() to read intensities from a long format file.
+readDIANN() and readSpectronaut() now call this function.
+
+\item
+Argument `run.column` of readDIAN() renamed to `sample.column`.
+Argument `extra.columns` of readDIAN() renamed to `annotation.columns`.
+readDIANN() now longer accepts a data.frame instead of a file.
+
+\item
+Argument `run.column` of readSpectronaut() renamed to `sample.column`.
+Argument `extra.columns` of readSpectronaut() renamed to `annotation.columns`.
+New arguments `isimputed.column` and `censor.value` for readSpectronaut(), making explicit operations that were already built-into readSpectronaut().
+
+\item
+dpcImpute() now gives a deprecation message in favor of dpcQuantByRow().
+}}
+
+
 \section{Version 1.3.6 (2026-02-08)}{\itemize{
 \item
-Change the terminology from "peptides" to "precursors" for the default unit of input data throughout the package.
+Change of terminology from "peptides" to "precursors" for the default unit of input data throughout the package.
 More discussion of precursors vs peptides and other levels of data in the vignette.
 Further clarification of the different levels of data that limpa can process.
 
@@ -13,8 +36,8 @@ Further clarification of the different levels of data that limpa can process.
 The output column `genes$NPeptides` from dpcQuant() renamed to `genes$NPrec`.
 
 \item
-Progress message from dpcQuant() and dpcQuantByRows() now uses "Precursors" instead of "Peptides" for number of rows.
-Percentage progress has been added.
+Progress message from dpcQuant() and dpcQuantByRows() now says "Precursors" instead of "Peptides" for the number of rows.
+Percentage progress has also been added.
 
 \item
 New argument `verbose` for readDIANN(). If `TRUE`, now gives message about number of filtered q-values.
