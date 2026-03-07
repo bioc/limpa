@@ -25,6 +25,7 @@ EListFromLongFormatFile(
 \arguments{
   \item{file}{
     the name or path of the report file. If a text file, it should not be compressed.
+    Alternatively, \code{file} can be a long format data.frame, as would arise from reading the report file into R using a function such as \code{read.delim}.
   }
   \item{path}{
     character string giving the directory containing the file.
@@ -43,9 +44,9 @@ EListFromLongFormatFile(
     character string giving the name of the column identifying the protein samples or DIA-NN runs.
   }
   \item{feature.column}{
-    either a character string giving the name of the column containing feature IDs, usually precursor ions,
-    or a character vector of length two containing the names of the peptide sequence and charge columns,
-    which will then be read separately and pasted together to form a precursor ID.
+    either a character string giving the name of the column containing feature IDs,
+    or a character vector containing the names of columns, which, when pasted together,
+    will uniquely identify each feature.
   }
   \item{intensity.column}{
     character string giving the name of the column containing feature intensities.
@@ -79,8 +80,26 @@ EListFromLongFormatFile(
 }
 
 \details{
-This function reads report files written by either DIA-NN (Demichev et al 2020) or Spectronaut (https://biognosys.com/software/spectronaut/), and produces an EList or EListRaw object with features as rows and samples as columns.
-It is normally used to read precursor ion intensities, but can read intensity data at any summarization level if the intensities are provided in the file.
+This function reads report files written in long format by tools wuch as DIA-NN (Demichev et al 2020), Spectronaut (https://biognosys.com/software/spectronaut/), or MSstats convert functions.
+It produces an EList or EListRaw object with features as rows and samples as columns.
+
+This function is most often used to read precursor ion intensities, but can read intensity data at any summarization level if the intensities are provided in the file.
+If \code{feature.column} contains protein IDs, then protein-level intensities (such as maxLFQ) summaries will be read.
+If \code{feature.column} specifies peptide sequence and charge, then precursor ion intensities will be read.
+If \code{feature.column} specifies fragment ion and fragment charge as well as peptide sequence and precursor charge, then fragment peak intensities can be read.
+
+If \code{file} is a Spectronaut v20 report file, then
+\code{feature.column="FG.ProteinsGroups"} and \code{intensity.column="PG.Quantity"} will read protein-level summary intensities,
+\code{feature.column=c("EG.ModifiedSquence,FG.Charge"} and \code{intensity.column="EG.TotalQuantity (Settings)"} will read precursor ion estimated intensities,
+while \code{feature.column=c("EG.ModifiedSequence","FG.Charge","F.FrgIon","F.Charge")} and \code{intensity.column="F.PeakArea"} will read fragment peak intensities.
+
+
+x1 <- EListFromLongFormatFile2(m,
+      sample.column="Run",
+      intensity.column="Intensity",
+      feature.column=c("PeptideSequence","PrecursorCharge","FragmentIon","ProductCharge"),
+      annotation.column="ProteinName")
+
 
 This function uses \code{data.table::fread} to read text files and \code{nanoparquet::read_parquet} to read Parquet files.
 }
@@ -93,6 +112,9 @@ Precursor and protein annotation is stored in the \code{genes} output component.
 }
 
 \references{
+BIOGNOSYS Spectronaut manual
+\url{https://biognosys.com/resources/spectronaut-manual/}.
+
 Demichev V, Messner CB, Vernardis SI, Lilley KS, Ralser M (2020).
 DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput.
 \emph{Nature Methods} 17(1), 41-44.

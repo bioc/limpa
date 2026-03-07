@@ -3,6 +3,17 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.3.8 (2026-03-07)}{\itemize{
+\item
+EListFromLongFormatFile(), readDIANN(), and readSpectronaut() now allow \code{feature.column}
+to be a vector of arbitrary length, which allows reading of fragment level data and reading
+of MSstats format files.
+
+EListFromLongFormatFile(), readDIANN(), and readSpectronaut() now allow `file` to be a 
+data.frame.
+}}
+
+
 \section{Version 1.3.7 (2026-02-19)}{\itemize{
 \item
 New function filterByDetection(), to choose proteins detected in at least a specified number of samples.

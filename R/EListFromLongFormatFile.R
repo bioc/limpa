@@ -12,8 +12,27 @@ EListFromLongFormatFile <- function(
   verbose=TRUE
 )
 # Read long format file containing feature intensities
-# Created 8 Feb 2026. Last modified 9 Feb 2026.
+# Created 8 Feb 2026. Last modified 5 Mar 2026.
 {
+  # Check column vectors
+  sample.column <- as.character(sample.column)
+  if(!identical(length(sample.column),1L)) stop("Exactly 1 sample column must be specified")
+  feature.column <- as.character(feature.column)
+  if(!(length(feature.column))) stop("At least one feature column must be specified")
+  intensity.column <- as.character(intensity.column)
+  if(!identical(length(intensity.column),1L)) stop("Exactly 1 intensity column must be specified")
+  if(length(isimputed.column) > 1L) stop("Only one imputation column allowed.")
+
+  # Combine column-name vectors
+  Required.Columns <- unique(c(sample.column, feature.column, intensity.column,
+    annotation.columns, q.columns, isimputed.column))
+
+  ## Start file import
+ 
+  if(is.data.frame(file)) {
+    Report <- file
+  } else {
+
   # Set path for input file
   file <- as.character(file)
   if(!is.null(path)) file <- file.path(path, file)
@@ -34,19 +53,6 @@ EListFromLongFormatFile <- function(
     format <- match.arg(format, choices = c("tsv", "parquet"))
   }
 
-  # Check column vectors
-  sample.column <- as.character(sample.column)
-  if(!identical(length(sample.column),1L)) stop("Exactly 1 sample column must be specified")
-  feature.column <- as.character(feature.column)
-  if(!(length(feature.column) %in% c(1L,2L))) stop("One or two feature columns must be specified")
-  intensity.column <- as.character(intensity.column)
-  if(!identical(length(intensity.column),1L)) stop("Exactly 1 intensity column must be specified")
-  if(length(isimputed.column) > 1L) stop("Only one imputation column allowed.")
-
-  # Combine column-name vectors
-  Required.Columns <- unique(c(sample.column, feature.column, intensity.column,
-    annotation.columns, q.columns, isimputed.column))
-
   # Read file
   if (format == "tsv") {
     Report <- suppressWarnings(
@@ -59,6 +65,8 @@ EListFromLongFormatFile <- function(
       nanoparquet::read_parquet(file,col_select=Required.Columns)
     )
   }
+
+  } ## End import
 
   # Check essential columns
   if(!hasName(Report,sample.column)) stop("sample column ",sample.column," not found.")
@@ -123,7 +131,7 @@ EListFromLongFormatFile <- function(
 
   # Composite feature column
   if(length(feature.column) > 1L) {
-    Report$Feature <- paste(Report[,feature.column[1]],Report[,feature.column[2]],sep=".")
+    Report$Feature <- do.call(paste,c(Report[,feature.column],sep="."))
     feature.column <- "Feature"
   }
  

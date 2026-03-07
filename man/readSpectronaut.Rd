@@ -27,6 +27,7 @@ readSpectronaut(
 \arguments{
   \item{file}{
     name of the Normal Report file from which the data are to be read.
+    Alternatively, \code{file} can be a data.frame, as would arise from reading the report file into R using a function such as \code{read.delim}.
   }
   \item{path}{
     character string giving the directory containing the file.
@@ -63,7 +64,7 @@ readSpectronaut(
     Any \code{TRUE} values will be replaced with NAs.}
   \item{censor.value}{
     any intensities less than or equal to this value will be replaced by NAs.
-    Spectronaut uses intensity values of 0 or 1 as a placeholder to indicate indetermined intensities.
+    Spectronaut uses intensity values of 0 or 1 as placeholders to indicate indetermined intensities.
   }
   \item{log}{
     logical.
@@ -82,12 +83,22 @@ The "Normal Report" file from Spectronaut (https://biognosys.com/software/spectr
 
 \value{
 If \code{log=FALSE}, an EListRaw object containing precursor-level unlogged intensities with precursor and protein annotation.
+Unlogged intensities equal to 0 represent non-detected precursors.
 If \code{log=TRUE}, an EList object containing precursor-level log2 intensities with precursor and protein annotation.
 Rows are precursor ions and columns are samples.
 Precursor and protein annotation is stored in the \code{genes} output component.
+
+If \code{file} is a Spectronaut v20 report file, then
+\code{feature.column="FG.ProteinGroups"} and \code{intensity.column="PG.Quantity"} will read protein-level summary intensities,
+\code{feature.column=c("EG.ModifiedSquence,FG.Charge"} and \code{intensity.column="EG.TotalQuantity (Settings)"} will read precursor ion estimated intensities,
+while \code{feature.column=c("EG.ModifiedSequence","FG.Charge","F.FrgIon","F.Charge")} and \code{intensity.column="F.PeakArea"} will read fragment peak intensities.
+Note that fragment intensities are not included in Spectronaut report files by default, but can be requested when Spectronaut is run.
 }
 
 \references{
+BIOGNOSYS Spectronaut manual
+\url{https://biognosys.com/resources/spectronaut-manual/}.
+
 Yu Z, Du A, Xu X, Li Y, Ma X, Zhang W, Zhang Y, Chu IK, Siu KM (2026).
 Spectronaut and DIA-NN: a comparison of their performance in the analysis of lung adenocarcinoma biopsies.
 \emph{ACS Omega} 11(5) 8080-8093.

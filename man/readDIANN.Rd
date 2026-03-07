@@ -26,6 +26,7 @@ readDIANN(
   \item{file}{
     name of the Report file from which the data are to be read.
     The file usually called \code{"report.tsv"} or \code{"report.parquet"} in the DIA-NN output.
+    Alternatively, \code{file} can be a data.frame, as would arise from reading the report file into R using a function such as \code{read.delim}.
   }
   \item{path}{
     character string giving the directory containing the file.
@@ -83,7 +84,7 @@ An example analysis using this function is shown here: \url{https://smythlab.git
 }
 
 \value{
-If \code{log=FALSE}, an EListRaw object containing precursor unlogged intensities.
+If \code{log=FALSE}, an EListRaw object containing precursor unlogged intensities, with intensities for non-detected precursors equal to 0.
 If \code{log=TRUE}, an EList object containing precursor log2 intensities.
 Rows are precursor ions and columns are samples.
 Precursor and protein annotation is stored in the \code{genes} output component.
