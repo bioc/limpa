@@ -10,9 +10,10 @@ Plot the peptide-level log-intensities for a specified protein.
 }
 
 \usage{
-\method{plotPeptides}{default}(y, cex = 1.5, lwd = 1.5, col = "blue", las = NULL, step.down = 0.5, ...)
+\method{plotPeptides}{default}(y, cex = 1.5, lwd = 1.5, col = "blue", las = NULL, step.down = 0.5,
+     xlab = "", ylab = "Log-intensity", ...)
 \method{plotPeptides}{EList}(y, index, cex = 1.5, lwd = 1.5, col = "blue",
-     las = NULL, step.down = 0.5, ...)
+     las = NULL, step.down = 0.5, xlab = "", ylab = "Log-intensity", ...)
 }
 
 \arguments{
@@ -39,6 +40,8 @@ Plot the peptide-level log-intensities for a specified protein.
   \item{step.down}{
     missing values are plotted this amount below the minimum observed value for each peptide.
   }
+  \item{xlab}{x-axis label.}
+  \item{ylab}{y-axis label.}
   \item{\dots}{
     other arguments are passed to \code{plot}.
   }

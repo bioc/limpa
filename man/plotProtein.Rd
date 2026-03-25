@@ -24,8 +24,8 @@ plotProtein(y, protein, col = "black", cex = 2, lwd = 2, las = NULL,
     orientation of x-axis sample labels. Use \code{0} or \code{1} for horizontal and \code{2} or \code{3} for vertical.
     Defaults to vertical if more than six samples and horizontal if less.
   }
-  \item{xlab}{x-axis label}
-  \item{ylab}{y-axis label}
+  \item{xlab}{x-axis label.}
+  \item{ylab}{y-axis label.}
   \item{\dots}{other arguments are passed to \code{plot()}.}
 }
 

@@ -3,9 +3,15 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.3.9 (2026-03-08)}{\itemize{
+\item
+plotPeptides() now allows users to set the x and y axis labels, same as plotProtein().
+}}
+
+
 \section{Version 1.3.8 (2026-03-07)}{\itemize{
 \item
-EListFromLongFormatFile(), readDIANN(), and readSpectronaut() now allow \code{feature.column}
+EListFromLongFormatFile(), readDIANN(), and readSpectronaut() now allow `feature.column`
 to be a vector of arbitrary length, which allows reading of fragment level data and reading
 of MSstats format files.
 
