@@ -11,7 +11,7 @@ Create an EList from a long format report file written by a quantification tool 
 EListFromLongFormatFile(
   file = "report.tsv", path = NULL, 
   format = NULL, sep = "\t",
-  sample.column,
+  run.column,
   feature.column,
   intensity.column,
   annotation.columns = character(0),
@@ -40,11 +40,12 @@ EListFromLongFormatFile(
     the field separator character for delimited text files.
     This argument is usually unnecessary, but it can be used in combination with \code{format="tsv"} to read comma-separated files.
   }
-  \item{sample.column}{
-    character string giving the name of the column identifying the protein samples or DIA-NN runs.
+  \item{run.column}{
+    name of the column identifying the mass spectrometry runs.
+    Usually each run is a distinct protein sample or, if fractioning is used, a fraction of a sample.
   }
   \item{feature.column}{
-    either a character string giving the name of the column containing feature IDs,
+    name of the column containing feature IDs,
     or a character vector containing the names of columns, which, when pasted together,
     will uniquely identify each feature.
   }
@@ -95,7 +96,7 @@ while \code{feature.column=c("EG.ModifiedSequence","FG.Charge","F.FrgIon","F.Cha
 
 
 x1 <- EListFromLongFormatFile2(m,
-      sample.column="Run",
+      run.column="Run",
       intensity.column="Intensity",
       feature.column=c("PeptideSequence","PrecursorCharge","FragmentIon","ProductCharge"),
       annotation.column="ProteinName")

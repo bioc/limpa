@@ -3,7 +3,7 @@ readDIANN <- function(
   path=NULL,
   format="tsv",
   sep="\t",
-  sample.column="Run",
+  run.column="Run",
   precursor.column="Precursor.Id",
   intensity.column="Precursor.Normalised",
   annotation.columns=c("Protein.Group", "Protein.Names", "Genes", "Proteotypic"),
@@ -14,14 +14,14 @@ readDIANN <- function(
 )
 # Read Report file from DIA-NN
 # Gordon Smyth and Mengbo Li
-# Created 3 July 2023. Last modified 15 Feb 2026.
+# Created 3 July 2023. Last modified 24 Mar 2026.
 {
   EListFromLongFormatFile(
     file=file,
     path=path,
     format=format,
     sep=sep,
-    sample.column=sample.column,
+    run.column=run.column,
     feature.column=precursor.column,
     intensity.column=intensity.column,
     annotation.columns=annotation.columns,

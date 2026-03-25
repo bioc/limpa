@@ -1,14 +1,14 @@
 dpcQuantHyperparam <- function(y, protein.id, dpc.slope=0.7, sd.quantile.for.logFC = 0.9, robust=FALSE, ...)
 # Estimate hyperparameters needed for dpcQuant
 # Mengbo Li and Gordon Smyth
-# Created 12 Sept 2024. Last modified 29 Dec 2024.
+# Created 12 Sept 2024. Last modified 22 Mar 2026.
 {
   # Check input
   y <- as.matrix(y)
   nsamples <- ncol(y)
 
   # Check that peptides are in protein order
-  if( !identical(protein.id,sort(protein.id)) ) {
+  if(is.unsorted(protein.id)) {
     o <- order(protein.id)
     protein.id <- protein.id[o]
     y <- y[o,,drop=FALSE]

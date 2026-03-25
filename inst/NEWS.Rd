@@ -3,6 +3,22 @@
 \encoding{UTF-8}
 
 
+\section{Version 1.3.10 (2026-03-25)}{\itemize{
+\item
+New function plotAveVsMis().
+
+\item
+dpcCN() now uses a systematic rather than a random sample of rows.
+Amongst other things, this ensures that the result does not change if the rows of `y` are reordered.
+
+\item
+Rename argument `sample.column` to `run.column` in EListFromLongFormatFile(), readDIANN() and readSpectronaut().
+
+\item
+Use of `base::is.unsorted` for more efficient checking of whether proteins are already sorted in two functions.
+}}
+
+
 \section{Version 1.3.9 (2026-03-08)}{\itemize{
 \item
 plotPeptides() now allows users to set the x and y axis labels, same as plotProtein().

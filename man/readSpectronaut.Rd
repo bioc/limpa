@@ -11,14 +11,14 @@ readSpectronaut(
   file = "Report.tsv",
   path = NULL,
   sep = "\t",
-  sample.column = "R.FileName",
+  run.column = "R.FileName",
   precursor.column = c("EG.ModifiedSequence","FG.Charge"),
   intensity.column = "EG.TotalQuantity (Settings)",
   annotation.columns = c("PG.ProteinAccessions","PG.Genes"),
   q.columns = c("EG.Qvalue", "PG.Qvalue"),
   q.cutoffs = 0.01,
   isimputed.column = "EG.IsImputed",
-  censor.value = 1,
+  censor.value = 0.5,
   log = TRUE,
   verbose = TRUE
 )
@@ -37,8 +37,9 @@ readSpectronaut(
     the field separator character.
     Spectronaut normally writes tab-delimited files, but this argument can be used to read comma-separated files if necessary.
   }
-  \item{sample.column}{
-    name of column containing run (sample) IDs.
+  \item{run.column}{
+    name of the column identifying the mass spectrometry runs.
+    Usually each run is a distinct protein sample or, if fractioning is used, a fraction of a sample.
   }
   \item{precursor.column}{
     name of column containing precursor IDs.

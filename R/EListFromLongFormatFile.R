@@ -1,7 +1,7 @@
 EListFromLongFormatFile <- function(
-  file="report.tsv", path=NULL, 
+  file="report.tsv", path=NULL,
   format=NULL, sep="\t",
-  sample.column,
+  run.column,
   feature.column,
   intensity.column,
   annotation.columns=character(0),
@@ -12,11 +12,11 @@ EListFromLongFormatFile <- function(
   verbose=TRUE
 )
 # Read long format file containing feature intensities
-# Created 8 Feb 2026. Last modified 5 Mar 2026.
+# Created 8 Feb 2026. Last modified 24 Mar 2026.
 {
   # Check column vectors
-  sample.column <- as.character(sample.column)
-  if(!identical(length(sample.column),1L)) stop("Exactly 1 sample column must be specified")
+  run.column <- as.character(run.column)
+  if(!identical(length(run.column),1L)) stop("Exactly 1 sample column must be specified")
   feature.column <- as.character(feature.column)
   if(!(length(feature.column))) stop("At least one feature column must be specified")
   intensity.column <- as.character(intensity.column)
@@ -24,7 +24,7 @@ EListFromLongFormatFile <- function(
   if(length(isimputed.column) > 1L) stop("Only one imputation column allowed.")
 
   # Combine column-name vectors
-  Required.Columns <- unique(c(sample.column, feature.column, intensity.column,
+  Required.Columns <- unique(c(run.column, feature.column, intensity.column,
     annotation.columns, q.columns, isimputed.column))
 
   ## Start file import
@@ -69,7 +69,7 @@ EListFromLongFormatFile <- function(
   } ## End import
 
   # Check essential columns
-  if(!hasName(Report,sample.column)) stop("sample column ",sample.column," not found.")
+  if(!hasName(Report,run.column)) stop("sample column ",run.column," not found.")
   if(!hasName(Report,intensity.column)) stop("intensity column ",intensity.column," not found.")
   for(fc in feature.column) if(!hasName(Report,fc)) stop("feature column ",fc," not found.")
 
@@ -136,10 +136,10 @@ EListFromLongFormatFile <- function(
   }
  
   # Convert intensities to wide format
-  Samples <- unique(Report[[sample.column]])
+  Samples <- unique(Report[[run.column]])
   Features <- unique(Report[[feature.column]])
   y <- matrix(0, length(Features), length(Samples))
-  mSample <- match(Report[[sample.column]], Samples)
+  mSample <- match(Report[[run.column]], Samples)
   mFeature <- match(Report[[feature.column]], Features)
   i <- mFeature + (mSample - 1L) * length(Features)
   y[i] <- Report[[intensity.column]]

@@ -20,7 +20,7 @@ dpcCN(
   \item{dpc.slope.start}{starting value for the DPC slope.}
   \item{dpc.start}{numeric vector of length 2 giving starting values for the DPC intercept and slope.}
   \item{iterations}{number of outer iterations.}
-  \item{subset}{maximum number of randomly selected rows of \code{y} to use in the calculation.}
+  \item{subset}{maximum number of rows of \code{y} to use in the calculation. A systematic sample is taken stratified by number of missing values and average observed log2-intensity.}
   \item{verbose}{if \code{TRUE}, then progress information will be printed from each iteration.}
 }
 

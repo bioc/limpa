@@ -5,7 +5,7 @@ import(methods)
 importFrom("stats", "binomial", "coef", "contrasts<-", "contr.sum", "dbeta", "dbinom", "dlogis",
            "glm", "lm.fit", ".lm.fit", "lm.wfit", "model.matrix", "optim", "optimize",
            "pbeta", "pbinom", "plogis", "qlogis", "quantile", "rbinom", "rnorm", "sd", "var")
-importFrom("graphics", "arrows", "axis", "legend", "lines")
+importFrom("graphics", "arrows", "axis", "boxplot", "legend", "lines")
 importFrom("utils", "hasName")
 importFrom("data.table", "fread")
 importFrom("statmod", "gauss.quad.prob", "logmdigamma")

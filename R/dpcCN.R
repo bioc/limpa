@@ -1,6 +1,6 @@
 dpcCN <- function(y, dpc.slope.start=0.7, dpc.start=NULL, iterations=2L, subset=2000L, verbose=FALSE)
 # MLE for DPC curve assuming complete normal model.
-# Created 14 Dec 2024. Last modified 31 Jan 2026.
+# Created 14 Dec 2024. Last modified 25 Mar 2026.
 {
 # Check y
   y <- as.matrix(y)
@@ -9,12 +9,13 @@ dpcCN <- function(y, dpc.slope.start=0.7, dpc.start=NULL, iterations=2L, subset=
   if(npeptides < 3) stop("Too few rows of data")
   if(nsamples < 2) stop("Too few samples")
 
-# Subset large datasets
+# Take systematic subset sample of the data rows
   if(npeptides > subset) {
-    set.seed(20250620)
-    invisible(runif(100))
-    i <- sample.int(npeptides, subset)
-    y <- y[i,]
+    NMis <- rowSums(is.na(y))
+    Ave <- rowMeans(y,na.rm=TRUE)
+    o <- order(NMis,Ave)
+    i <- round( ((1:subset)-0.5) * npeptides / subset )
+    y <- y[o[i],]
     npeptides <- subset
   }
 

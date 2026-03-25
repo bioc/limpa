@@ -19,7 +19,7 @@ dpcQuant.default <- function(y, protein.id, dpc=NULL, dpc.slope=0.8, verbose=TRU
 
 dpcQuant.EList <- function(y, protein.id="Protein.Group", dpc=NULL, dpc.slope=0.8, verbose=TRUE, chunk=1000L, ...)
 # Use the DPC to quantify protein expression values by maximum posterior.
-# Created 27 Dec 2024. Last modified 29 Dec 2025.
+# Created 27 Dec 2024. Last modified 22 Mar 2026.
 {
 # Check dpc
   if(is.list(dpc)) dpc <- dpc$dpc
@@ -41,11 +41,11 @@ dpcQuant.EList <- function(y, protein.id="Protein.Group", dpc=NULL, dpc.slope=0.
     if(!identical(nrow(y),length(protein.id))) stop("length(protein.id) must match nrows(y)")
   }
 
-# If all proteins have just one peptide, call dpcImpute instead
+# If all proteins have just one peptide, call dpcQuantByRow instead
   a <- anyDuplicated(protein.id)
   if(identical(a,0L)) {
-    message("All proteins have exactly one peptide: calling dpcImpute() instead")
-    return(dpcImpute(y,dpc,verbose=verbose,chunk=chunk,...))
+    message("All proteins have exactly one peptide: calling dpcQuantByRow() instead")
+    return(dpcQuantByRow(y,dpc,verbose=verbose,chunk=chunk,...))
   }
 
 # Sort peptides in protein order

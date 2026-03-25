@@ -11,7 +11,7 @@ readDIANN(
   path = NULL,
   format = "tsv",
   sep = "\t",
-  sample.column = "Run",
+  run.column = "Run",
   precursor.column = "Precursor.Id",
   intensity.column = "Precursor.Normalised",
   annotation.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic"),
@@ -41,8 +41,9 @@ readDIANN(
     the field separator character.
     DIA-NN report files are normally tab-delimited, but this argument can be used together with \code{format="tsv"} to read comma-separated files if necessary.
   }
-  \item{sample.column}{
-    name of column containing run (sample) IDs.
+  \item{run.column}{
+    name of the column identifying the mass spectrometry runs.
+    Usually each run is a distinct protein sample or, if fractioning is used, a fraction of a sample.
   }
   \item{precursor.column}{
     name of column containing precursor IDs.

@@ -2,27 +2,27 @@ readSpectronaut <- function(
   file="Report.tsv",
   path=NULL,
   sep="\t",
-  sample.column = "R.FileName",
+  run.column = "R.FileName",
   precursor.column = c("EG.ModifiedSequence","FG.Charge"),
   intensity.column = "EG.TotalQuantity (Settings)",
   annotation.columns = c("PG.ProteinAccessions","PG.Genes"),
   q.columns = c("EG.Qvalue", "PG.Qvalue"),
   q.cutoffs = 0.01,
   isimputed.column = "EG.IsImputed",
-  censor.value=1,
+  censor.value=0.5,
   log=TRUE,
   verbose=TRUE
 )
 # Read normal (wide) report file from Spectronaut.
 # Gordon Smyth and Mengbo Li
-# Created 18 December 2023. Last modified 15 Feb 2026.
+# Created 18 December 2023. Last modified 24 Mar 2026.
 {
   EListFromLongFormatFile(
     file=file,
     path=path,
     format="tsv",
     sep=sep,
-    sample.column=sample.column,
+    run.column=run.column,
     feature.column=precursor.column,
     intensity.column=intensity.column,
     annotation.columns=annotation.columns,

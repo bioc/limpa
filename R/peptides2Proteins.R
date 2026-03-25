@@ -1,6 +1,6 @@
 peptides2Proteins <- function(y, protein.id, sigma=0.5, dpc=c(-4,0.7), prior.mean=6, prior.sd=10, prior.logFC=2, standard.errors=FALSE, newton.polish=FALSE, verbose=FALSE, chunk=1000L)
 # Summarize peptide to protein log-expression for many proteins.
-# Created 10 July 2023. Last modified 7 Feb 2026.
+# Created 10 July 2023. Last modified 22 Mar 2026.
 {
 # Check y
   y <- as.matrix(y)
@@ -11,8 +11,8 @@ peptides2Proteins <- function(y, protein.id, sigma=0.5, dpc=c(-4,0.7), prior.mea
   if(anyNA(protein.id)) stop("NAs not allowed in protein.id")
   if(!identical(NRows,length(protein.id))) stop("length of protein.id must agree with row dimension of y")
 
-# Check that peptides are in protein order
-  if( !identical(protein.id,sort(protein.id)) ) {
+# Check that peptides are in protein order and that proteins are sorted alphabetically
+  if(is.unsorted(protein.id)) {
     o <- order(protein.id)
     protein.id <- protein.id[o]
     y <- y[o,,drop=FALSE]
