@@ -1,70 +1,66 @@
 \name{dpc}
 \alias{dpc}
-\alias{dpcON}
-\title{Detection Probability Curve Assuming Observed Normal Model}
+\title{Detection Probability Curve}
 
 \description{
-Detection probability curve for label free shotgun proteomics data
-assuming observed normal log-intensities.
+Detection probability curve for label-free shotgun proteomics data.
 }
 
 \usage{
-dpc(y, maxit = 100, eps = 1e-04, b1.upper = 1)
-dpcON(y, dpc.start = NULL, dpc.slope.start = 0.7, robust = FALSE, verbose = FALSE)
+dpc(
+  y, model="cn",
+  dpc.start = NULL, dpc.slope.start = 0.7, 
+  iterations = 2, subset = 2000, robust = TRUE, verbose = FALSE
+)
 }
 
 \arguments{
   \item{y}{
-    numeric matrix of log2-transformed intensities.
-    Rows correspond to peptide precursors and columns to samples.
-    Any object such as an EList that can be coerced to a matrix is also acceptable.
+    numeric matrix of log2-intensities.
+    Rows correspond to features (usually precursor ions) and columns to runs or samples.
   }
-  \item{maxit}{maximum number of iterations.}
-  \item{eps}{convergence tolerance.}
-  \item{b1.upper}{upper bound for the DPC slope.}
+  \item{model}{
+    which model to use.
+    Possibilities are \code{"cn"} for the complete-normal model or \code{"on"} for the observed-normal model.
+  }
   \item{dpc.start}{numeric vector of length 2 giving starting values for the DPC intercept and slope.}
-  \item{dpc.slope.start}{starting value for DPC slope.}
-  \item{robust}{if \code{TRUE}, outlier rows will be downweighted to produce a robust DPC estimate.}
-  \item{verbose}{if \code{TRUE}, successive estimates will be printed to standard output.}
+  \item{dpc.slope.start}{starting value for the DPC slope. Only used if \code{dpc.start} is NULL.}
+  \item{iterations}{number of outer iterations. Only used if \code{model="cn"}.}
+  \item{subset}{maximum number of rows of \code{y} to use in the calculation. A systematic sample is taken stratified by number of missing values and average observed log2-intensity. Only used if \code{model="cn"}.}
+  \item{robust}{if \code{TRUE}, outlier rows will be downweighted to produce a robust DPC estimate. Only used if \code{model="on"}.}
+  \item{verbose}{if \code{TRUE}, then progress information will be printed from each iteration.}
 }
 
 \details{
-Estimate the detection probability curve (DPC) for label-free shotgun proteomics data using the method described by Li & Smyth (2023).
-This function assumes that the observed log-intensities are normally distributed (the "observed normal" model),
-and uses exponential tilting to reformulate the DPC in terms of observed statistics instead of in terms of unobserved quantities.
+Estimate the detection probability curve (DPC) for label-free shotgun proteomics data
+using either the "complete normal" or the "observed normal" models.
+The function returns results from either \code{dpcCON()} or \code{dpcON()}, depending on whether \code{model} is equal to \code{"cn"} or \code{"on"}.
+
+Li, Cobbold & Smyth (2025) show that the complete normal and observed normal models, although theoretically different, give similar results in practice.
 }
 
 \value{
 A list with components
-  \item{dpc}{estimated DPC coefficients.}
-  \item{history}{iteration history.}
-  \item{dpc.start}{initial values estimated for the DPC coefficients.}
-  \item{prop.detected}{proportion of observed values for each row.}
-  \item{mu.prior}{prior value for row-wise means for observed values.}
-  \item{n.prior}{precision of prior for row-wise means, expressed as effective number of observations.}
-  \item{s2.prior}{prior value for row-wise variances for observed values.}
-  \item{df.prior}{precision of prior for row-wise variances, expressed as prior degrees of freedom.}
-  \item{mu.obs}{posterior row-wise means for observed values.}
-  \item{s2.obs}{posterior row-wise variances for observed values.}
-  \item{mu.mis}{posterior row-wise means for values that are missing.}
-  \item{neg.loglik}{minus twice the maximized log-likelihood.}
-  \item{model}{equal to \code{"ON"}.}
+  \item{dpc}{numeric vector of length 2 giving the estimated DPC intercept and slope.}
+  \item{model}{equal to either \code{"CN"} or \code{"ON"}.}
+
+For other components of the output list, see the help pages for \code{\link{dpcCN}} or \code{\link{dpcON}}.
 }
 
 \references{
-Li M, Smyth GK (2023).
-Neither random nor censored: estimating intensity-dependent probabilities for missing values in label-free proteomics.
-\emph{Bioinformatics} 39(5), btad200.
-\doi{10.1093/bioinformatics/btad200}
+Li M, Cobbold SA, Smyth GK (2025).
+Quantification and differential analysis of mass spectrometry proteomics data with probabilistic recovery of information from missing values.
+\emph{bioRxiv} 2025/651125.
+\doi{10.1101/2025.04.28.651125}
 }
 
 \seealso{
-\code{\link{dpcCN}}
+\code{\link{dpc}}.
 }
 
 \examples{
 y <- simProteinDataSet(n.peptides=100, n.groups=1)
-dpcest <- dpcON(y)
+dpcest <- dpc(y)
 dpcest$dpc
 }
 

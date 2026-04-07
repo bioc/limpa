@@ -9,7 +9,12 @@ colSums(is.na(y.peptide$E))
 summary(y.peptide$E[,1])
 names(y.peptide)
 
-dpcfit <- dpc(y.peptide)
+dpcCN(y.peptide)$dpc
+dpcON(y.peptide,robust=TRUE)$dpc
+dpcON(y.peptide,robust=FALSE)$dpc
+dpc(y.peptide,model="cn")$dpc
+dpc(y.peptide,model="on")$dpc
+dpcfit <- dpcLegacy(y.peptide)
 dpcfit$dpc
 
 y.protein <- dpcQuant(y.peptide,protein.id="Protein",dpcfit)

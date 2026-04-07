@@ -1,6 +1,6 @@
 
-R version 4.5.2 (2025-10-31 ucrt) -- "[Not] Part in a Rumble"
-Copyright (C) 2025 The R Foundation for Statistical Computing
+R version 4.6.0 alpha (2026-03-28 r89737 ucrt)
+Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -28,12 +28,27 @@ Loading required package: limma
  S1  S2  S3  S4  S5  S6  S7  S8  S9 S10 
  35  48  43  36  44  44  38  41  35  47 
 > summary(y.peptide$E[,1])
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.     NAs 
   2.160   5.548   7.025   6.711   8.586   9.717      35 
 > names(y.peptide)
 [1] "E"       "genes"   "targets" "dpc"     "other"  
 > 
-> dpcfit <- dpc(y.peptide)
+> dpcCN(y.peptide)$dpc
+     beta0      beta1 
+-3.9147384  0.7526776 
+> dpcON(y.peptide,robust=TRUE)$dpc
+    beta0     beta1 
+-4.205688  0.800220 
+> dpcON(y.peptide,robust=FALSE)$dpc
+    beta0     beta1 
+-4.205688  0.800220 
+> dpc(y.peptide,model="cn")$dpc
+     beta0      beta1 
+-3.9147384  0.7526776 
+> dpc(y.peptide,model="on")$dpc
+    beta0     beta1 
+-4.205688  0.800220 
+> dpcfit <- dpcLegacy(y.peptide)
 1 peptides are completely missing in all samples.
 > dpcfit$dpc
      beta0      beta1 
@@ -64,4 +79,4 @@ Proteins: 25  Precursors: 100 (100%)
 > 
 > proc.time()
    user  system elapsed 
-   0.37    0.12    0.46 
+   0.54    0.06    0.68 

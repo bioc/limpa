@@ -1,6 +1,6 @@
-dpcCN <- function(y, dpc.slope.start=0.7, dpc.start=NULL, iterations=2L, subset=2000L, verbose=FALSE)
+dpcCN <- function(y, dpc.start=NULL, dpc.slope.start=0.7, iterations=2L, subset=2000L, verbose=FALSE)
 # MLE for DPC curve assuming complete normal model.
-# Created 14 Dec 2024. Last modified 25 Mar 2026.
+# Created 14 Dec 2024. Last modified 7 Apr 2026.
 {
 # Check y
   y <- as.matrix(y)

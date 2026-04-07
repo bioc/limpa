@@ -1,8 +1,31 @@
-dpc <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
+dpc <- function(y, model="cn", dpc.start=NULL, dpc.slope.start=0.7, iterations=2L, subset=2000L, robust=TRUE, verbose=FALSE)
+# Estimate detection probability curve (DPC)
+# by calling either dpcCN() or dpcON().
+# Created 7 Apr 2026.
+{
+  model <- match.arg(model,c("cn","on"))
+  switch(model,
+    cn = dpcCN(y=y,
+      dpc.start=dpc.start,
+      dpc.slope.start=dpc.slope.start,
+      iterations=iterations,
+      subset=subset,
+      verbose=verbose),
+    on = dpcON(y=y,
+      dpc.start=dpc.start,
+      dpc.slope.start=dpc.slope.start,
+      robust=robust,
+      verbose=verbose)
+  )
+}
+
+dpcLegacy <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
 # Estimate detection probability curve (DPC) assuming ON model.
 # Mengbo Li and Gordon Smyth
 # Created 16 May 2022 as part of proDP package.
-# Migrated to limpa package 10 Sept 2024. Last modified 31 Dec 2024.
+# Migrated to limpa package 10 Sep 2024.
+# Last modified 31 Dec 2024.
+# Renamed from dpc to dpcLegacy 7 Apr 2026.
 {
 
   y <- as.matrix(y)

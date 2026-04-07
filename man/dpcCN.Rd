@@ -4,21 +4,23 @@
 
 \description{
 Detection probability curve for label-free shotgun proteomics data
-assuming a complete normal model for the peptide intensities.
+assuming a complete normal model for the log-intensities.
 }
 
 \usage{
 dpcCN(
-  y, dpc.slope.start = 0.7, dpc.start = NULL, 
+  y, dpc.start = NULL, dpc.slope.start = 0.7, 
   iterations = 2, subset = 2000, verbose = FALSE
 )
 }
 
 \arguments{
-  \item{y}{numeric matrix of log2-intensities.
-    Rows correspond to peptide precursors and columns to samples.}
-  \item{dpc.slope.start}{starting value for the DPC slope.}
+  \item{y}{
+    numeric matrix of log2-intensities.
+    Rows correspond to features (usually precursor ions) and columns to runs or samples.
+  }
   \item{dpc.start}{numeric vector of length 2 giving starting values for the DPC intercept and slope.}
+  \item{dpc.slope.start}{starting value for the DPC slope. Only used if \code{dpc.start} is NULL.}
   \item{iterations}{number of outer iterations.}
   \item{subset}{maximum number of rows of \code{y} to use in the calculation. A systematic sample is taken stratified by number of missing values and average observed log2-intensity.}
   \item{verbose}{if \code{TRUE}, then progress information will be printed from each iteration.}
@@ -33,7 +35,7 @@ The algorithm uses an alternating iteration (Smyth, 1996), alternately estimatin
 The inner estimations use the BFGS algorithm implemented in the \code{optim} function.
 Three outer iterations are usually sufficient.
 
-\code{\link{dpc}} estimates the DPC by a different method, described in Li & Smyth (2023), based on exponential tilting and assuming that only the observed values are normally distributed (the "observed normal" model).
+\code{\link{dpcON}} estimates the DPC by a different method, described in Li & Smyth (2023), based on exponential tilting and assuming that only the observed values are normally distributed (the "observed normal" model).
 }
 
 \note{
@@ -72,7 +74,7 @@ Partitioned algorithms for maximum likelihood and other non-linear estimation.
 }
 
 \seealso{
-\code{\link{dpc}}.
+\code{\link{dpcON}} for DPC estimation using the observed normal model, and \code{\link{dpc}} for the new main user function.
 }
 
 \examples{

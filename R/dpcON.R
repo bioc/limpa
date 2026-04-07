@@ -1,6 +1,6 @@
-dpcON <- function(y, dpc.start=NULL, dpc.slope.start=0.7, robust=FALSE, verbose=FALSE)
+dpcON <- function(y, dpc.start=NULL, dpc.slope.start=0.7, robust=TRUE, verbose=FALSE)
 # Estimate detection probability curve (DPC) assuming ON model.
-# Created 22 Jun 2025. Last modified 12 Oct 2025.
+# Created 22 Jun 2025. Last modified 7 Apr 2026.
 {
 # Check y
   y <- as.matrix(y)
@@ -38,7 +38,7 @@ dpcON <- function(y, dpc.start=NULL, dpc.slope.start=0.7, robust=FALSE, verbose=
     w <- 1/( 1/(n.detected+0.5) + 1/(nsamples-n.detected+0.5) )
     X <- cbind(1,mu.obs-b1*s2.obs)
     fit <- lm.wfit(X,LogitProb,w)
-    dpc.start <- as.vector(fit$coef)
+    dpc.start <- as.vector(fit$coefficients)
   }
   b0 <- dpc.start[1]
   b1 <- dpc.start[2]

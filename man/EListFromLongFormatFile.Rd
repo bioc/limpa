@@ -14,10 +14,11 @@ EListFromLongFormatFile(
   run.column,
   feature.column,
   intensity.column,
-  annotation.columns = character(0),
-  q.columns = character(0), q.cutoffs = 0.01,
-  isimputed.column = NULL,
+  annotation.columns = NULL,
+  q.columns = NULL, q.cutoffs = 0.01,
+  filter.columns = NULL, filter.values = TRUE,
   censor.value = NULL,
+  matrix.columns = NULL,
   log = TRUE,
   verbose = TRUE)
 }
@@ -63,13 +64,21 @@ EListFromLongFormatFile(
     Either a single value or a numeric vector of the same length as \code{q.columns}.
     Only features with all q-values below the corresponding cutoffs will be retained.
   }
-  \item{isimputed.column}{
-    optional column name indicating whether the intensity was imputed.
-    The column should contain \code{TRUE/FALSE} values.
-    Any \code{TRUE} values will be replaced with NAs.
+  \item{filter.columns}{
+    optional columns that will be used to filter observations.
+    The columns may indicated observations that were imputed, or values not used for the final intensity estimates.
+    Any observation that is flagged by any of these columns will be \code{NA} in the output EList.
+  }
+  \item{filter.values}{
+    values for the \code{filter.columns} indicating that the observation should be filtered.
   }
   \item{censor.value}{
     any intensities less than or equal to this value will be replaced by NAs.
+  }
+  \item{matrix.columns}{
+    character vector of column names containing observation-level covariates.
+    Each such variable will be copied into a matrix of the same dimensions as the intensities
+    and stored in the \code{other} component of the output object.
   }
   \item{log}{
     logical.
@@ -93,14 +102,6 @@ If \code{file} is a Spectronaut v20 report file, then
 \code{feature.column="FG.ProteinsGroups"} and \code{intensity.column="PG.Quantity"} will read protein-level summary intensities,
 \code{feature.column=c("EG.ModifiedSquence,FG.Charge"} and \code{intensity.column="EG.TotalQuantity (Settings)"} will read precursor ion estimated intensities,
 while \code{feature.column=c("EG.ModifiedSequence","FG.Charge","F.FrgIon","F.Charge")} and \code{intensity.column="F.PeakArea"} will read fragment peak intensities.
-
-
-x1 <- EListFromLongFormatFile2(m,
-      run.column="Run",
-      intensity.column="Intensity",
-      feature.column=c("PeptideSequence","PrecursorCharge","FragmentIon","ProductCharge"),
-      annotation.column="ProteinName")
-
 
 This function uses \code{data.table::fread} to read text files and \code{nanoparquet::read_parquet} to read Parquet files.
 }
