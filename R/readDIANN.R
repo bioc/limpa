@@ -1,7 +1,7 @@
 readDIANN <- function(
   file="report.parquet",
   path=NULL,
-  format="tsv",
+  format=NULL,
   sep="\t",
   run.column="Run",
   precursor.column="Precursor.Id",
@@ -14,7 +14,7 @@ readDIANN <- function(
 )
 # Read Report file from DIA-NN
 # Gordon Smyth and Mengbo Li
-# Created 3 July 2023. Last modified 28 Mar 2026.
+# Created 3 July 2023. Last modified 17 Apr 2026.
 {
   EListFromLongFormatFile(
     file=file,

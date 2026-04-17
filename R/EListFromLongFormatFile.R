@@ -13,7 +13,7 @@ EListFromLongFormatFile <- function(
   verbose=TRUE
 )
 # Read long format file containing feature intensities
-# Created 8 Feb 2026. Last modified 6 Apr 2026.
+# Created 8 Feb 2026. Last modified 17 Apr 2026.
 {
   # Check column vectors
   run.column <- as.character(run.column)
@@ -59,10 +59,10 @@ EListFromLongFormatFile <- function(
       fread(file,sep=sep,select=Required.Columns,data.table=FALSE,showProgress=FALSE)
     )
   } else {
-    suppressPackageStartupMessages(OK <- requireNamespace("nanoparquet",quietly=TRUE))
-    if(!OK) stop("nanoparquet package required but is not installed (or can't be loaded)")
+    suppressPackageStartupMessages(OK <- requireNamespace("arrow",quietly=TRUE))
+    if(!OK) stop("arrow package required but is not installed (or can't be loaded)")
     Report <- suppressWarnings(
-      nanoparquet::read_parquet(file,col_select=Required.Columns)
+      arrow::read_parquet(file,col_select=Required.Columns)
     )
   }
 

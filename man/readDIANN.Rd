@@ -9,7 +9,7 @@ Read the DIA-NN report file (report.tsv or report.parquet) into an EList object.
 readDIANN(
   file = "report.parquet",
   path = NULL,
-  format = "tsv",
+  format = NULL,
   sep = "\t",
   run.column = "Run",
   precursor.column = "Precursor.Id",
@@ -34,12 +34,12 @@ readDIANN(
   }
   \item{format}{
     character string giving the format of the file.
-    Possible values are \code{"tsv"} for a tab-delimited text file or \code{"parquet"} for a Parquet format file.
+    Possible values are \code{"tsv"} for a delimited text file or \code{"parquet"} for a Parquet format file.
     By default, the format is detected from the file name extension.
   }
   \item{sep}{
-    the field separator character.
-    DIA-NN report files are normally tab-delimited, but this argument can be used together with \code{format="tsv"} to read comma-separated files if necessary.
+    the field separator character, used when \code{format="tsv"}.
+    Text files from DIA-NN are normally tab-delimited, but this argument can be used together with \code{format="tsv"} to read comma-separated files if necessary.
   }
   \item{run.column}{
     name of the column identifying the mass spectrometry runs.
