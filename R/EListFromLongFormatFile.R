@@ -13,7 +13,7 @@ EListFromLongFormatFile <- function(
   verbose=TRUE
 )
 # Read long format file containing feature intensities
-# Created 8 Feb 2026. Last modified 17 Apr 2026.
+# Created 8 Feb 2026. Last modified 26 Apr 2026.
 {
   # Check column vectors
   run.column <- as.character(run.column)
@@ -59,10 +59,10 @@ EListFromLongFormatFile <- function(
       fread(file,sep=sep,select=Required.Columns,data.table=FALSE,showProgress=FALSE)
     )
   } else {
-    suppressPackageStartupMessages(OK <- requireNamespace("arrow",quietly=TRUE))
-    if(!OK) stop("arrow package required but is not installed (or can't be loaded)")
+    suppressPackageStartupMessages(OK <- requireNamespace("nanoparquet",quietly=TRUE))
+    if(!OK) stop("nanoparquet package required but is not installed (or can't be loaded)")
     Report <- suppressWarnings(
-      arrow::read_parquet(file,col_select=Required.Columns)
+      nanoparquet::read_parquet(file,col_select=Required.Columns)
     )
   }
 
@@ -90,7 +90,7 @@ EListFromLongFormatFile <- function(
     q.cutoffs <- rep_len(q.cutoffs,length(q.columns))
     i <- hasName(Report,q.columns)
     if(!all(i)) {
-      message("Q-value columms ",paste(q.columns[!i],collapse=",")," not found.")
+      message("Q-value columns ",paste(q.columns[!i],collapse=",")," not found.")
       q.columns <- q.columns[i]
       q.cutoffs <- q.cutoffs[i]
     }
@@ -99,7 +99,7 @@ EListFromLongFormatFile <- function(
     filter.values <- rep_len(filter.values,length(filter.columns))
     i <- hasName(Report,filter.columns)
     if(!all(i)) {
-      message("Filter columms ",paste(filter.columns[!i],collapse=",")," not found.")
+      message("Filter columns ",paste(filter.columns[!i],collapse=",")," not found.")
       filter.columns <- filter.columns[i]
       filter.values <- filter.values[i]
     }
@@ -107,7 +107,7 @@ EListFromLongFormatFile <- function(
   if(length(matrix.columns)) {
     i <- hasName(Report,matrix.columns)
     if(!all(i)) {
-      message("matrix columms ",paste(matrix.columns[!i],collapse=",")," not found.")
+      message("matrix columns ",paste(matrix.columns[!i],collapse=",")," not found.")
       matrix.columns <- matrix.columns[i]
     }
   }

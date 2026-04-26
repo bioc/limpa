@@ -13,12 +13,28 @@ readSpectronaut <- function(
   censor.value = 0,
   run.info = TRUE,
   log = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  ...
 )
 # Read normal (wide) report file from Spectronaut.
 # Gordon Smyth and Mengbo Li
-# Created 18 December 2023. Last modified 6 Apr 2026.
+# Created 18 December 2023. Last modified 26 Apr 2026.
 {
+# Check for deprecated arguments
+  dots <- list(...)
+  if(hasName(dots,"precursor.column")) {
+    feature.column <- dots$precursor.column
+    message("`precursor.column` is deprecated, please use `feature.column` instead.")
+  }
+  if(hasName(dots,"qty.column")) {
+    intensity.column <- dots$qty.column
+    message("`qty.column` is deprecated, please use `intensity.column` instead.")
+  }
+  if(hasName(dots,"extra.columns")) {
+    annotation.columns <- dots$extra.columns
+    message("`extra.columns` is deprecated, please use `annotation.columns` instead.")
+  }
+
   x <- EListFromLongFormatFile(
     file=file,
     path=path,
@@ -36,6 +52,7 @@ readSpectronaut <- function(
     log=log,
     verbose=verbose
   )
+
   if(run.info) x$targets <- readSpectronautRunInfo(
     file=file,
     path=path,
@@ -43,5 +60,6 @@ readSpectronaut <- function(
     run.column=run.column,
     verbose=verbose
   )
+
   x
 }

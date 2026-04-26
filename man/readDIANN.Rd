@@ -12,13 +12,14 @@ readDIANN(
   format = NULL,
   sep = "\t",
   run.column = "Run",
-  precursor.column = "Precursor.Id",
+  feature.column = "Precursor.Id",
   intensity.column = "Precursor.Normalised",
   annotation.columns = c("Protein.Group", "Protein.Names", "Genes", "Proteotypic"),
   q.columns = c("Q.Value", "Lib.Q.Value", "Lib.PG.Q.Value"),
   q.cutoffs = 0.01,
   log = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  \dots
 )
 }
 
@@ -45,8 +46,8 @@ readDIANN(
     name of the column identifying the mass spectrometry runs.
     Usually each run is a distinct protein sample or, if fractioning is used, a fraction of a sample.
   }
-  \item{precursor.column}{
-    name of column containing precursor IDs.
+  \item{feature.column}{
+    name of column containing precursor IDs, or protein IDs if protein-level data is being read.
     Can be character vector of length two containing the names of the peptide sequence and charge columns, which will then be read separately and pasted together to form a precursor ID.
   }
   \item{intensity.column}{
@@ -70,6 +71,9 @@ readDIANN(
   \item{verbose}{
     logical, whether to send informative progress messages.
     Set this to \code{FALSE} if you want the function to run quietly.
+  }
+  \item{\dots}{
+    other arguments are not currently used.
   }
 }
 

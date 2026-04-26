@@ -3,117 +3,89 @@
 \encoding{UTF-8}
 
 
-\section{Version 1.3.10 (2026-03-25)}{\itemize{
+\section{Version 1.4.0 (2026-04-29)}{\itemize{
 \item
-New function plotAveVsMis().
+A limpa documentation page has been created at https://github.com/SmythLab/limpa/
+containing a number of case study analyses of real datasets.
+This URL has been addded to the package DESCRIPTION file
+and the package vignette now has a "Further documentation" section that links out to this site.
+
+\item
+Change of terminology from "peptides" to "precursors" as the default unit of input data throughout the package.
+More discussion of precursors vs peptides and other levels of data in the vignette.
+
+\item
+Further clarification in the vignette that limpa can process any level of data for which intensities are available,
+including fragments, precursors, peptides, proteins, or PTMs.
+limpa can summarize precursors to either peptides or proteins
+and can conduct differential analyses at any level.
+The vignette now cites the Corso et al (2026) preprint as an IP-MS example.
+limpa can also explore isoform-specific expression by
+conducting differential usage analyses of peptides or PTMs within proteins,
+and there is a case study of such an analysis at https://github.com/SmythLab/limpa/.
+
+\item
+As part of the above change, the output column `genes$NPeptides` from dpcQuant() nas been renamed to `genes$NPrec`,
+and the progress message from dpcQuant() and dpcQuantByRows()
+now says "Precursors" instead of "Peptides" for the number of rows.
+(The column name and message are generic:
+the column name will still be `NPrec` and the message will still say "Precursors" even if
+fragments are being processed instead of precursors.)
+Percentage progress has also been added to the progress message.
+
+\item
+A new function EListFromLongFormatFile() has been added to read intensities from any long format file,
+and readDIANN() and readSpectronaut() now call this function instead of handling their own read code.
+The input file can be either an uncompressed delimited text file or a Parquet file,
+and the file type is detected automatically from the file name.
+The new function uses the nanoparquet package to read Parquet
+files whereas readDIANN() previously used arrow.
+The new function adds a number of new arguments and changes the names of some existing arguments.
+It allows filtering by any number of columns and allows reading of observation-level covariates.
+All three functions now allow `feature.column` to be a vector of arbitrary length,
+which allows columns to be combined to created a unique precursor or fragment ID.
+Amongst other things, this functionality facilitates reading of fragment level data
+and reading of MSstats format files.
+All three functions have a new argument `verbose` to optionally output
+progress information and the number of intensity values that have been filtered.
+
+\item
+readDIAN() has a new argument list to match EListFromLongFormatFile().
+The old argument `precursor.column` is renamed to `feature.column`,
+`qty.column` to `intensity.column`, and `extra.columns` to `annotation.columns`.
+Default setting for `q.columns` is updated.
+
+\item
+readSpectronaut() has a new argument list to match EListFromLongFormatFile().
+The old argument `precursor.column` is renamed to `feature.column`, `qty.column` to `intensity.column`, and `extra.columns` to `annotation.columns`.
+New arguments `filter.columns` and `censor.value` give more flexibility over filtering.
+
+\item
+New function readSpectronautRunInfo(), which is called by readSpectronaut()
+to include run (sample) information in the `targets` component of the output.
+
+\item
+New function plotAveVsMis() to plot average observed log-intensity per row vs the number of missing values.
+
+\item
+dpc() has been replaced by a new function that combines the functionalities of
+dpcON() and dpcCN(), with the CN method as the default.
+The original dpc() function has been renamed to dpcLegacy().
 
 \item
 dpcCN() now uses a systematic rather than a random sample of rows.
 Amongst other things, this ensures that the result does not change if the rows of `y` are reordered.
+The default value for `subset` is increased to 2000 and the default value for `verbose` is now `FALSE`.
 
 \item
-Rename argument `sample.column` to `run.column` in EListFromLongFormatFile(), readDIANN() and readSpectronaut().
-
-\item
-Use of `base::is.unsorted` for more efficient checking of whether proteins are already sorted in two functions.
-}}
-
-
-\section{Version 1.3.9 (2026-03-08)}{\itemize{
-\item
-plotPeptides() now allows users to set the x and y axis labels, same as plotProtein().
-}}
-
-
-\section{Version 1.3.8 (2026-03-07)}{\itemize{
-\item
-EListFromLongFormatFile(), readDIANN(), and readSpectronaut() now allow `feature.column`
-to be a vector of arbitrary length, which allows reading of fragment level data and reading
-of MSstats format files.
-
-EListFromLongFormatFile(), readDIANN(), and readSpectronaut() now allow `file` to be a 
-data.frame.
-}}
-
-
-\section{Version 1.3.7 (2026-02-19)}{\itemize{
-\item
-New function filterByDetection(), to choose proteins detected in at least a specified number of samples.
-
-\item
-New function EListFromLongFormatFile() to read intensities from a long format file.
-readDIANN() and readSpectronaut() now call this function.
-
-\item
-Argument `run.column` of readDIAN() renamed to `sample.column`.
-Argument `extra.columns` of readDIAN() renamed to `annotation.columns`.
-readDIANN() now longer accepts a data.frame instead of a file.
-
-\item
-Argument `run.column` of readSpectronaut() renamed to `sample.column`.
-Argument `extra.columns` of readSpectronaut() renamed to `annotation.columns`.
-New arguments `isimputed.column` and `censor.value` for readSpectronaut(), making explicit operations that were already built-into readSpectronaut().
-
-\item
-dpcImpute() now gives a deprecation message in favor of dpcQuantByRow().
-}}
-
-
-\section{Version 1.3.6 (2026-02-08)}{\itemize{
-\item
-Change of terminology from "peptides" to "precursors" for the default unit of input data throughout the package.
-More discussion of precursors vs peptides and other levels of data in the vignette.
-Further clarification of the different levels of data that limpa can process.
-
-\item
-The output column `genes$NPeptides` from dpcQuant() renamed to `genes$NPrec`.
-
-\item
-Progress message from dpcQuant() and dpcQuantByRows() now says "Precursors" instead of "Peptides" for the number of rows.
-Percentage progress has also been added.
-
-\item
-New argument `verbose` for readDIANN(). If `TRUE`, now gives message about number of filtered q-values.
-
-\item
-Bug fix to readDIANN() to avoid unnecessary message about `q.cutoffs` not being the correct length, when it is actually of length 1.
-Other code streamlining for readDIANN().
-
-\item
-Add filtering based on number of detected samples to DIA-NN and Spectronaut HYE case studies (on external website).
-}}
-
-
-\section{Version 1.3.5 (2026-01-31)}{\itemize{
-\item
-The upper limit of the y-axis in the plot from plotDPC() is now extended slightly to allow for jittering of the detection proportions. Previously some of the jittered proportions above 1 where not shown on the plot.
+The upper limit of the y-axis in the plot from plotDPC() is now extended slightly to allow for jittering of the detection proportions. Previously some of the jittered proportions above 1 were not shown on the plot.
 
 \item
 New argument `show.start` for plotDPC() to control whether the starting curve from dpc() is shown on the plot as well as the final plot.
 Default is now `FALSE`, whereas previously the starting curve was always shown.
 
 \item
-In dpcCN(), default value for `subset` increased to 2000 and default value for `verbose` reset to `FALSE`.
-
-\item
-Axis labels produced by plotProtein() are now user-settable.
-
-\item
-Vignette now cites Corso et al (2026) as IP-MS example.
-
-\item
-Vignette now has a "Further documentation" section that links out to case studies, FAQ and reference manual.
-The case studies are given as one link instead of listing them individually.
-}}
-
-
-\section{Version 1.3.3 (2025-12-30)}{\itemize{
-\item
 dpcImpute() renamed to dpcQuantByRow() (although old function name will continue to work for backward compatibility).
-
-\item
-New case study section in vignette linking out to several external vignettes and to a FAQ.
-The DIA-NN case study is also now external, on the limpa GitHub website.
 
 \item
 When operating on an EList, dpcQuant() now removes the protein ID
@@ -122,30 +94,24 @@ IDs appear only as row.names.
 dpcQuant() also stores the DPC and the hyperparameters in the output EList object.
 
 \item
-plotPeptides() now plots sample names, same as plotProtein().
+New function filterByDetection(), to choose proteins detected in at least a specified number of samples.
 
 \item
-The y-axis from plotPeptides() is now labelled "Log-intensities"
-instead of "Log-expression".
+Axis labels produced by plotPeptides() and plotProtein() are now user-settable.
+plotPeptides() now plots sample names, in the same style as plotProtein(),
+and the y-axis is now labelled "Log-intensities" instead of "Log-expression".
 
 \item
 New argument `las` for plotProtein() and plotPeptides() to allow vertical orientation of sample names on x-axis.
-}}
-
-
-\section{Version 1.2.1 (2025-11-15)}{\itemize{
-\item
-readDIANN() now detects format automatically from file extension.
-Default file name updated to `"report.parquet"` instead of `"Report.tsv"`.
 
 \item
-Update default `q.columns` for readDIANN().
+readFragPipe() and readMaxQuant() are now mentioned in the vignette.
 
 \item
-Mention readFragPipe() and readMaxQuant() in vignette.
+Acknowledgement section added to vignette.
 
 \item
-Add GitHub URL to DESCRIPTION.
+A number of programming efficiencies have been introduced to various functions.
 }}
 
 

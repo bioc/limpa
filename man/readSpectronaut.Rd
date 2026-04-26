@@ -23,7 +23,8 @@ readSpectronaut(
   censor.value = 0,
   run.info = TRUE,
   log = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  \dots
 )
 
 readSpectronautRunInfo(
@@ -103,6 +104,9 @@ readSpectronautRunInfo(
   \item{run.info.columns}{
     names of columns containing run-level information, for example information on the experimental conditions.
     By default, the standard Spectronaut columns are read.
+  }
+  \item{\dots}{
+    other arguments are not currently used.
   }
 }
 

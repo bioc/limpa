@@ -1,5 +1,5 @@
 
-R version 4.6.0 alpha (2026-03-28 r89737 ucrt)
+R version 4.6.0 (2026-04-24 ucrt) -- "Because it was There"
 Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64
 
@@ -79,4 +79,4 @@ Proteins: 25  Precursors: 100 (100%)
 > 
 > proc.time()
    user  system elapsed 
-   0.54    0.06    0.68 
+   0.53    0.09    0.65 
