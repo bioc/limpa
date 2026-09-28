@@ -12,9 +12,9 @@ pztbinomSameSizeLogitPBothTails(q, size, logit.prob)
 }
 
 \arguments{
-  \item{q}{vector of quantiles.}
+  \item{q}{numeric vector of quantiles.}
   \item{size}{number of trials (one or more). Should be a single value.}
-  \item{logit.prob}{success probabilities on logit scale.}
+  \item{logit.prob}{numeric vector of success probabilities on logit scale.}
 }
 
 \details{
@@ -26,13 +26,17 @@ This function is slow but accurate, even for very small or very large success pr
 \value{
 A list with components:
   \item{left.p.value}{left tail p-values.}
-  \item{right.p.value}{matrix of complete log2-expression values without NAs.}
-  \item{total.prob}{data.frame with columns \code{Protein} and \code{DE.Status} giving protein ID and true DE status.}
+  \item{right.p.value}{left tail p-values.}
+  \item{total.prob}{
+    probability that the untruncated binomial random deviates are greater than zero.
+    Serves as the denominator for the zero-truncated probabilities.
+  }
+All components are numeric vectors of length equal to \code{max(length(q), length(logit.prob))}.
 }
 
 \examples{
-x <- 1:3
-pztbinomSameSizeLogitPBothTails(x, size=3, logit.prob=0)
+q <- 1:3
+pztbinomSameSizeLogitPBothTails(q, size=3, logit.prob=0)
 }
 
 \concept{Zero truncated binomial distribution}

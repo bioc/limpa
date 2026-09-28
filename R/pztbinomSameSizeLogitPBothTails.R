@@ -2,10 +2,17 @@ pztbinomSameSizeLogitPBothTails <- function(q, size, logit.prob)
 # Tail probablities for zero-truncated binomial distribution
 # assuming same `size` for all values and success probability on logit scale.
 # Computes right and left tail p-values.
-# Created 24 Jun 2025. Last modified 26 Jun 2025.
+# Created 24 Jun 2025. Last modified 28 Sep 2026.
 {
-# Check input
-  n <- length(q)
+# Output length is max length of q and logit.prob.
+# Ensure q and logit.prob are compatible lengths.
+  nq <- length(q)
+  np <- length(logit.prob)
+  n <- max(nq,np)
+  if(nq < n) q <- rep_len(q,n)
+  if((np > 1) && (np < n)) logit.prob <- rep_len(logit.prob,n)
+
+# Check size input
   if(length(size) > 1L) stop("Need same `size` for all values")
 
 # Matrix of probabilities
@@ -18,6 +25,7 @@ pztbinomSameSizeLogitPBothTails <- function(q, size, logit.prob)
 
 # Zero-truncated total probability
   total.prob <- colSums(d)
+  names(total.prob) <- names(q)
 
 # Right and left p-values, allowing for fractional q values
   left.p.value <- right.p.value <- q
@@ -26,7 +34,7 @@ pztbinomSameSizeLogitPBothTails <- function(q, size, logit.prob)
   qceiling <- pmax(ceiling(q),1)
   ileft <- iright <- 1:n
   if(min(qfloor) < 1) ileft <- ileft[qfloor >= 1]
-  if(max(qceiling) < 1) iright <- iright[qceiling <= size]
+  if(max(qceiling) > size) iright <- iright[qceiling <= size]
   for (j in ileft) left.p.value[j] <- sum(d[1:qfloor[j],j])
   for (j in iright) right.p.value[j] <- sum(d[qceiling[j]:size,j])
   left.p.value <- left.p.value / total.prob
