@@ -1,12 +1,12 @@
 dpcCN <- function(y, dpc.start=NULL, dpc.slope.start=0.7, iterations=2L, subset=2000L, verbose=FALSE)
 # MLE for DPC curve assuming complete normal model.
-# Created 14 Dec 2024. Last modified 7 Apr 2026.
+# Created 14 Dec 2024. Last modified 29 Sep 2026.
 {
 # Check y
   y <- as.matrix(y)
   npeptides <- nrow(y)
   nsamples <- ncol(y)
-  if(npeptides < 3) stop("Too few rows of data")
+  if(npeptides < 3) stop("Too few rows of data to reliably estimate DPC")
   if(nsamples < 2) stop("Too few samples")
 
 # Take systematic subset sample of the data rows

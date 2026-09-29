@@ -24,25 +24,27 @@ dpcLegacy <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
 # Mengbo Li and Gordon Smyth
 # Created 16 May 2022 as part of proDP package.
 # Migrated to limpa package 10 Sep 2024.
-# Last modified 31 Dec 2024.
 # Renamed from dpc to dpcLegacy 7 Apr 2026.
+# Last modified 29 Sep 2026.
 {
-
   y <- as.matrix(y)
   narrays <- ncol(y)
   n.detected <- rowSums(!is.na(y))
 
-  # Check input
+  # Remove entirely missing rows
   if (identical(min(n.detected),0)) {
     message(sum(n.detected == 0), " peptides are completely missing in all samples.")
-    y <- y[n.detected > 0.5, ]
+    y <- y[n.detected > 0.5, , drop=FALSE]
     n.detected <- n.detected[n.detected > 0.5]
   }
+
+  # Check for min number of rows (added 29 Sep 2026)
+  if(nrow(y) < 3) stop("too few observed rows for reliable DPC estimation")
 
   dp <- n.detected / narrays
   wt <- rep_len(narrays, nrow(y))
 
-  # Get hyperparamters
+  # Get hyperparameters
   hp <- .dpcHyperparam(y)
   mu_obs <- hp$mu_obs.post
   s2_obs <- hp$s2_obs.post
@@ -109,12 +111,11 @@ dpcLegacy <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
        mu.mis = mu_mis)
 }
 
-
-
-
 .dpcHyperparam <- function(y)
-# Obtain hyperparameters and empirical Bayes moderated mu_obs and s2_obs values for fitting the DPC.
-# Migrated from the protDP package on 10 Sept 2024. Last modified 31 Dec 2024.
+# Obtain hyperparameters and empirical Bayes moderated mu_obs and s2_obs
+# values for fitting the DPC, using the method of Li & Smyth (2023).
+# Migrated from the protDP package on 10 Sept 2024.
+# Last modified 29 Sep 2026.
 {
   # Observed sample means and variances
   nmis <- rowSums(is.na(y))
@@ -143,6 +144,12 @@ dpcLegacy <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
                             eps = 1e-5,
                             trace = FALSE)
 
+  # Apply limit on n0, because mu0 cannot be more
+  # reliable than total number of observations.
+  # The limit was added 29 Sep 2026 and avoids problems
+  # when n0 is infinite.
+  n0 <- pmin(n0, sum(nobs))
+
   # posterior mean and variance
   mu_obs.post <- (n*mu + n0*mu0) / (n + n0)
   if (is.infinite(df.prior)) {
@@ -160,8 +167,6 @@ dpcLegacy <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
        mu_obs.post = mu_obs.post,
        s2_obs.post = s2_obs.post)
 }
-
-
 
 .n0EstimateFromModT <- function(tstat,
                                df,
@@ -198,7 +203,6 @@ dpcLegacy <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
   }
   1/v0
 }
-
 
 .logitZTBinom <- function(dp, X, wt, beta0, b0.upper = 0, b1.upper = Inf)
 # Fit an empirical logit spline assuming zero-truncated binomial distribution
@@ -237,9 +241,6 @@ dpcLegacy <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
 
 }
 
-
-
-
 .logitZTBinom.negLL <- function(params, dp, wt, X)
 # Negative log-likelihood under zero-truncated binomial distribution to fit an empirical logit spline
 # This is the objective function for logitZTBinom().
@@ -250,9 +251,6 @@ dpcLegacy <- function(y, maxit = 100, eps = 1e-4, b1.upper = 1)
   eta <- colSums(t(X) * params)
   -sum(dztbinom(x = dp*wt, size = wt, prob = eta, log = TRUE, logit.p=TRUE))
 }
-
-
-
 
 .dpc.negLL <- function(params, dp, wt, mu_obs, mu_mis)
 # Negative log-likelihood under zero-truncated binomial distribution to fit DPC
