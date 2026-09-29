@@ -40,7 +40,7 @@ dztbinom <- function(x, size, prob, log=FALSE, logit.p=FALSE)
 
 pztbinom <- function(q, size, prob, lower.tail = TRUE, log.p = FALSE)
 # Cumulative probablities for zero-truncated binomial distribution
-# Created 12 Aug 2023. Last modified 23 Aug 2023.
+# Created 12 Aug 2023. Last modified 29 Sep 2026.
 #
 # Note that subtractive cancellation can occur, e.g.,
 # pztbinom(1.5,size=100,prob=1e-50) gives 0 instead of 1.
@@ -48,6 +48,7 @@ pztbinom <- function(q, size, prob, lower.tail = TRUE, log.p = FALSE)
   if(lower.tail) {
     p <- pbinom(q=q,size=size,prob=prob,lower.tail=TRUE,log.p=FALSE)
     p <- p - pbinom(0.5,size=size,prob=prob,lower.tail=TRUE,log.p=FALSE)
+    if(min(q) < 1) p[q<1] <- 0
     p <- p / pbinom(0.5,size=size,prob=prob,lower.tail=FALSE,log.p=FALSE)
     if(log.p) p <- log(p)
   } else {

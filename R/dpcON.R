@@ -1,6 +1,6 @@
 dpcON <- function(y, dpc.start=NULL, dpc.slope.start=0.7, robust=TRUE, verbose=FALSE)
 # Estimate detection probability curve (DPC) assuming ON model.
-# Created 22 Jun 2025. Last modified 7 Apr 2026.
+# Created 22 Jun 2025. Last modified 29 Sep 2026.
 {
 # Check y
   y <- as.matrix(y)
@@ -14,6 +14,9 @@ dpcON <- function(y, dpc.start=NULL, dpc.slope.start=0.7, robust=TRUE, verbose=F
     n.detected <- n.detected[n.detected > 0.5]
   }
   npeptides <- nrow(y)
+
+# Check on nrows added 29 Sep 2026
+  if(npeptides < 3) stop("too few observed rows to estimate the dpc")
 
 # Estimate hyperparamters
   hp <- .dpcHyperparam(y)
